@@ -18,28 +18,67 @@ export const metadata: Metadata = {
 }
 
 export default async function AdminDashboard() {
-  const supabase = await createClient()
+  let supabase
+  try {
+    supabase = await createClient()
+  } catch (error) {
+    console.error('Failed to create Supabase client:', error)
+    // Return a basic dashboard if Supabase fails
+    return (
+      <div className="space-y-6 bg-white min-h-full">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-muted-foreground mt-1">Welcome to the KIBANA admin panel</p>
+        </div>
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">Unable to connect to database. Please check your configuration.</p>
+        </div>
+      </div>
+    )
+  }
 
   // Fetch stats - gracefully handle errors if tables don't exist
-  const [productsRes, ordersRes, usersRes, revenueRes, recentOrdersRes] = await Promise.all([
-    supabase.from('products').select('id', { count: 'exact', head: true }).catch(() => ({ count: 0, error: null })),
-    supabase.from('orders').select('id', { count: 'exact', head: true }).catch(() => ({ count: 0, error: null })),
-    supabase.from('users').select('id', { count: 'exact', head: true }).catch(() => ({ count: 0, error: null })),
-    supabase
-      .from('orders')
-      .select('total_amount, created_at')
-      .eq('payment_status', 'paid')
-      .catch(() => ({ data: [], error: null })),
-    supabase
-      .from('orders')
-      .select(`
-        *,
-        user:users(email, full_name)
-      `)
-      .order('created_at', { ascending: false })
-      .limit(10)
-      .catch(() => ({ data: [], error: null })),
-  ])
+  let productsRes = { count: 0, error: null }
+  let ordersRes = { count: 0, error: null }
+  let usersRes = { count: 0, error: null }
+  let revenueRes = { data: [], error: null }
+  let recentOrdersRes = { data: [], error: null }
+  let pendingOrders = 0
+
+  try {
+    const results = await Promise.allSettled([
+      supabase.from('products').select('id', { count: 'exact', head: true }),
+      supabase.from('orders').select('id', { count: 'exact', head: true }),
+      supabase.from('users').select('id', { count: 'exact', head: true }),
+      supabase
+        .from('orders')
+        .select('total_amount, created_at')
+        .eq('payment_status', 'paid'),
+      supabase
+        .from('orders')
+        .select(`
+          *,
+          user:users(email, full_name)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(10),
+      supabase
+        .from('orders')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'pending'),
+    ])
+
+    productsRes = results[0].status === 'fulfilled' ? results[0].value : { count: 0, error: null }
+    ordersRes = results[1].status === 'fulfilled' ? results[1].value : { count: 0, error: null }
+    usersRes = results[2].status === 'fulfilled' ? results[2].value : { count: 0, error: null }
+    revenueRes = results[3].status === 'fulfilled' ? results[3].value : { data: [], error: null }
+    recentOrdersRes = results[4].status === 'fulfilled' ? results[4].value : { data: [], error: null }
+    const pendingRes = results[5].status === 'fulfilled' ? results[5].value : { count: 0, error: null }
+    pendingOrders = pendingRes.count || 0
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error)
+    // Continue with default values
+  }
 
   const totalRevenue = revenueRes.data?.reduce((sum: number, order: { total_amount: number }) => sum + order.total_amount, 0) || 0
 
@@ -51,17 +90,10 @@ export default async function AdminDashboard() {
     ?.filter((order: { created_at: string }) => new Date(order.created_at) >= thisMonth)
     .reduce((sum: number, order: { total_amount: number }) => sum + order.total_amount, 0) || 0
 
-  // Get pending orders count - gracefully handle errors
-  const { count: pendingOrders } = await supabase
-    .from('orders')
-    .select('id', { count: 'exact', head: true })
-    .eq('status', 'pending')
-    .catch(() => ({ count: 0, error: null }))
-
   const stats = [
     {
       title: 'Total Products',
-      value: productsRes.count || 0,
+      value: (productsRes as any)?.count || 0,
       iconName: 'Package',
       color: 'text-blue-600',
       change: '+12%',
@@ -69,7 +101,7 @@ export default async function AdminDashboard() {
     },
     {
       title: 'Total Orders',
-      value: ordersRes.count || 0,
+      value: (ordersRes as any)?.count || 0,
       iconName: 'ShoppingBag',
       color: 'text-green-600',
       change: '+8%',
@@ -77,7 +109,7 @@ export default async function AdminDashboard() {
     },
     {
       title: 'Total Users',
-      value: usersRes.count || 0,
+      value: (usersRes as any)?.count || 0,
       iconName: 'Users',
       color: 'text-purple-600',
       change: '+15%',
@@ -85,10 +117,10 @@ export default async function AdminDashboard() {
     },
     {
       title: 'Total Revenue',
-      value: `₹${totalRevenue.toLocaleString()}`,
+      value: `₹${(totalRevenue || 0).toLocaleString()}`,
       iconName: 'DollarSign',
       color: 'text-orange-600',
-      change: `₹${monthRevenue.toLocaleString()} this month`,
+      change: `₹${(monthRevenue || 0).toLocaleString()} this month`,
       trend: 'up' as const,
     },
   ]
@@ -133,12 +165,12 @@ export default async function AdminDashboard() {
 
       {/* Charts and Data */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <SalesChart revenueData={revenueRes.data || []} />
+        <SalesChart revenueData={(revenueRes as any)?.data || []} />
         <TopProducts />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentOrders orders={recentOrdersRes.data || []} />
+        <RecentOrders orders={(recentOrdersRes as any)?.data || []} />
         <RecentActivity />
       </div>
     </div>
