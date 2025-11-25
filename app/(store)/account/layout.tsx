@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation'
 import { StoreHeader } from '@/components/store/StoreHeader'
 import { StoreFooter } from '@/components/store/StoreFooter'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AccountLayout({ children }: { children: ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

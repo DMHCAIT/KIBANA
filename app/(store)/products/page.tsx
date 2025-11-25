@@ -8,6 +8,8 @@ import { StoreFooter } from '@/components/store/StoreFooter'
 import { Suspense } from 'react'
 import { Metadata } from 'next'
 
+export const dynamic = 'force-dynamic'
+
 interface ProductsPageProps {
   searchParams: {
     category?: string
@@ -185,8 +187,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         <div className="flex-1">
           {/* Toolbar */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <ProductSort />
-            <ProductViewToggle />
+            <Suspense fallback={<div className="h-10 w-[180px] bg-muted animate-pulse rounded" />}>
+              <ProductSort />
+            </Suspense>
+            <Suspense fallback={<div className="h-10 w-20 bg-muted animate-pulse rounded" />}>
+              <ProductViewToggle />
+            </Suspense>
           </div>
 
           {/* Products Grid */}
