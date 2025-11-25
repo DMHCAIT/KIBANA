@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { X, SlidersHorizontal } from 'lucide-react'
-import { Slider } from '@/components/ui/slider'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { ChevronDown } from 'lucide-react'
@@ -18,25 +17,17 @@ interface ProductFiltersProps {
   brands: string[]
   colors: string[]
   materials: string[]
-  minPrice: number
-  maxPrice: number
 }
 
 export function ProductFilters({ 
   categories, 
   brands, 
   colors, 
-  materials,
-  minPrice,
-  maxPrice 
+  materials
 }: ProductFiltersProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   
-  const [priceRange, setPriceRange] = useState<[number, number]>([
-    parseInt(searchParams.get('min_price') || minPrice.toString()),
-    parseInt(searchParams.get('max_price') || maxPrice.toString())
-  ])
   const [selectedBrands, setSelectedBrands] = useState<string[]>(
     searchParams.get('brand')?.split(',') || []
   )
@@ -66,14 +57,6 @@ export function ProductFilters({
     router.push(`/products?${params.toString()}`)
   }
 
-  const handlePriceChange = (values: number[]) => {
-    setPriceRange([values[0], values[1]])
-  }
-
-  const handlePriceApply = () => {
-    applyFilter('min_price', priceRange[0].toString())
-    applyFilter('max_price', priceRange[1].toString())
-  }
 
   const toggleBrand = (brand: string) => {
     const newBrands = selectedBrands.includes(brand)
@@ -100,7 +83,6 @@ export function ProductFilters({
   }
 
   const clearAllFilters = () => {
-    setPriceRange([minPrice, maxPrice])
     setSelectedBrands([])
     setSelectedColors([])
     setSelectedMaterials([])
@@ -109,7 +91,6 @@ export function ProductFilters({
 
   const activeFiltersCount = 
     (searchParams.get('category') ? 1 : 0) +
-    (searchParams.get('min_price') || searchParams.get('max_price') ? 1 : 0) +
     selectedBrands.length +
     selectedColors.length +
     selectedMaterials.length
@@ -168,47 +149,6 @@ export function ProductFilters({
         </CardContent>
       </Card>
 
-      {/* Price Range */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Price Range</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Slider
-              value={[priceRange[0], priceRange[1]]}
-              onValueChange={handlePriceChange}
-              min={minPrice}
-              max={maxPrice}
-              step={100}
-              className="w-full"
-            />
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>₹{priceRange[0].toLocaleString()}</span>
-              <span>₹{priceRange[1].toLocaleString()}</span>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <Input
-              type="number"
-              placeholder="Min"
-              value={priceRange[0]}
-              onChange={(e) => setPriceRange([parseInt(e.target.value) || minPrice, priceRange[1]])}
-              className="h-9"
-            />
-            <Input
-              type="number"
-              placeholder="Max"
-              value={priceRange[1]}
-              onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || maxPrice])}
-              className="h-9"
-            />
-          </div>
-          <Button onClick={handlePriceApply} className="w-full" size="sm">
-            Apply Price Filter
-          </Button>
-        </CardContent>
-      </Card>
 
       {/* Brands */}
       {brands.length > 0 && (

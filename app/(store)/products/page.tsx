@@ -63,13 +63,6 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     query = query.or(`name.ilike.%${searchParams.search}%,description.ilike.%${searchParams.search}%,brand.ilike.%${searchParams.search}%`)
   }
 
-  // Price range filter
-  if (searchParams.min_price) {
-    query = query.gte('price', parseFloat(searchParams.min_price))
-  }
-  if (searchParams.max_price) {
-    query = query.lte('price', parseFloat(searchParams.max_price))
-  }
 
   // Brand filter
   if (searchParams.brand) {
@@ -153,23 +146,6 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     materials = []
   }
 
-  // Get price range for slider
-  const { data: priceData } = await supabase
-    .from('products')
-    .select('price')
-    .eq('is_active', true)
-    .order('price', { ascending: true })
-    .limit(1)
-  
-  const { data: maxPriceData } = await supabase
-    .from('products')
-    .select('price')
-    .eq('is_active', true)
-    .order('price', { ascending: false })
-    .limit(1)
-
-  const minPrice = priceData?.[0]?.price || 0
-  const maxPrice = maxPriceData?.[0]?.price || 100000
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -201,8 +177,6 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               brands={brands}
               colors={colors}
               materials={materials}
-              minPrice={minPrice}
-              maxPrice={maxPrice}
             />
           </Suspense>
         </aside>
