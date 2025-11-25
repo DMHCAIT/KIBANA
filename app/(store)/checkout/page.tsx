@@ -544,7 +544,7 @@ export default function CheckoutPage() {
                         <Checkbox
                           id="same-as-shipping"
                           checked={useBillingAsShipping}
-                          onCheckedChange={setUseBillingAsShipping}
+                          onCheckedChange={(checked) => setUseBillingAsShipping(checked === true)}
                         />
                         <Label htmlFor="same-as-shipping" className="cursor-pointer">
                           Same as shipping address
@@ -654,7 +654,7 @@ export default function CheckoutPage() {
                   <Checkbox
                     id="terms"
                     checked={termsAccepted}
-                    onCheckedChange={setTermsAccepted}
+                    onCheckedChange={(checked) => setTermsAccepted(checked === true)}
                   />
                   <Label htmlFor="terms" className="cursor-pointer text-sm">
                     I agree to the{' '}
