@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import OpenAI from 'openai'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+function getOpenAIClient() {
+  if (!process.env.OPENAI_API_KEY) {
+    return null
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,7 +29,8 @@ export async function POST(request: NextRequest) {
     }
 
     // If OpenAI is configured, use AI for recommendations
-    if (process.env.OPENAI_API_KEY && userHistory) {
+    const openai = getOpenAIClient()
+    if (openai && userHistory) {
       const completion = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: [
