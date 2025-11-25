@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -14,7 +14,7 @@ import { toast } from 'sonner'
 import { StoreHeader } from '@/components/store/StoreHeader'
 import { StoreFooter } from '@/components/store/StoreFooter'
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -142,6 +142,41 @@ export default function LoginPage() {
           </div>
         </CardContent>
       </Card>
+    </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <div className="flex min-h-screen flex-col bg-white">
+      <StoreHeader />
+      <main className="flex-1 flex items-center justify-center py-12">
+        <Suspense fallback={
+          <Card className="w-full max-w-md shadow-lg border border-gray-200 rounded-2xl bg-white">
+            <CardHeader className="text-center">
+              <div className="flex justify-center mb-4">
+                <ShoppingBag className="h-12 w-12 text-primary" />
+              </div>
+              <CardTitle className="text-3xl">Welcome Back</CardTitle>
+              <CardDescription>Sign in to your KIBANA account</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" type="email" disabled />
+                </div>
+                <div>
+                  <Label htmlFor="password">Password</Label>
+                  <Input id="password" type="password" disabled />
+                </div>
+                <Button className="w-full" disabled>Loading...</Button>
+              </div>
+            </CardContent>
+          </Card>
+        }>
+          <LoginForm />
+        </Suspense>
       </main>
       <StoreFooter />
     </div>
