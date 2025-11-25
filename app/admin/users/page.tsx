@@ -3,6 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Users, Mail, Calendar } from 'lucide-react'
 import { Metadata } from 'next'
+import { Database } from '@/types/database'
+
+type User = Database['public']['Tables']['users']['Row']
 
 export const metadata: Metadata = {
   title: 'Users Management | KIBANA Admin',
@@ -39,7 +42,7 @@ export default async function AdminUsersPage() {
 
       {users && users.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {users.map((user) => (
+          {users.map((user: User) => (
             <Card key={user.id} className="hover:shadow-lg transition-all duration-300 border border-gray-200 bg-white">
               <CardHeader className="bg-gradient-to-r from-gray-50 to-white border-b">
                 <div className="flex items-center justify-between">
