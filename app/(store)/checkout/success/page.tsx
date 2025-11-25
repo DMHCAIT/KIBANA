@@ -1,6 +1,7 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CheckCircle } from 'lucide-react'
@@ -8,44 +9,76 @@ import Link from 'next/link'
 import { StoreHeader } from '@/components/store/StoreHeader'
 import { StoreFooter } from '@/components/store/StoreFooter'
 
-export default function CheckoutSuccessPage() {
+function CheckoutSuccessContent() {
   const searchParams = useSearchParams()
   const orderNumber = searchParams.get('order')
 
+  return (
+    <div className="max-w-2xl mx-auto text-center">
+      <Card className="shadow-2xl border-0 rounded-[2rem] bg-gradient-to-br from-white via-green-50/20 to-white">
+        <CardContent className="p-12">
+          <div className="flex justify-center mb-6">
+            <div className="rounded-full bg-green-100 p-4">
+              <CheckCircle className="h-16 w-16 text-green-600" />
+            </div>
+          </div>
+          <h1 className="text-3xl font-bold mb-4">Order Placed Successfully!</h1>
+          <p className="text-muted-foreground mb-6">
+            Thank you for your purchase. Your order has been confirmed.
+          </p>
+          {orderNumber && (
+            <p className="text-lg font-semibold mb-8">
+              Order Number: <span className="text-primary">{orderNumber}</span>
+            </p>
+          )}
+          <div className="flex gap-4 justify-center">
+            <Button asChild>
+              <Link href="/products">Continue Shopping</Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href="/account/orders">View Orders</Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+export default function CheckoutSuccessPage() {
   return (
     <div className="flex min-h-screen flex-col bg-white">
       <StoreHeader />
       <main className="flex-1 flex items-center justify-center py-16">
         <div className="container px-4">
-          <div className="max-w-2xl mx-auto text-center">
-            <Card className="shadow-2xl border-0 rounded-[2rem] bg-gradient-to-br from-white via-green-50/20 to-white">
-          <CardContent className="p-12">
-            <div className="flex justify-center mb-6">
-              <div className="rounded-full bg-green-100 p-4">
-                <CheckCircle className="h-16 w-16 text-green-600" />
-              </div>
+          <Suspense fallback={
+            <div className="max-w-2xl mx-auto text-center">
+              <Card className="shadow-2xl border-0 rounded-[2rem] bg-gradient-to-br from-white via-green-50/20 to-white">
+                <CardContent className="p-12">
+                  <div className="flex justify-center mb-6">
+                    <div className="rounded-full bg-green-100 p-4">
+                      <CheckCircle className="h-16 w-16 text-green-600" />
+                    </div>
+                  </div>
+                  <h1 className="text-3xl font-bold mb-4">Order Placed Successfully!</h1>
+                  <p className="text-muted-foreground mb-6">
+                    Thank you for your purchase. Your order has been confirmed.
+                  </p>
+                  <div className="flex gap-4 justify-center">
+                    <Button asChild>
+                      <Link href="/products">Continue Shopping</Link>
+                    </Button>
+                    <Button variant="outline" asChild>
+                      <Link href="/account/orders">View Orders</Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-            <h1 className="text-3xl font-bold mb-4">Order Placed Successfully!</h1>
-            <p className="text-muted-foreground mb-6">
-              Thank you for your purchase. Your order has been confirmed.
-            </p>
-            {orderNumber && (
-              <p className="text-lg font-semibold mb-8">
-                Order Number: <span className="text-primary">{orderNumber}</span>
-              </p>
-            )}
-            <div className="flex gap-4 justify-center">
-              <Button asChild>
-                <Link href="/products">Continue Shopping</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/account/orders">View Orders</Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+          }>
+            <CheckoutSuccessContent />
+          </Suspense>
         </div>
-      </div>
       </main>
       <StoreFooter />
     </div>
