@@ -50,17 +50,17 @@ export default async function AdminDashboard() {
       supabase.from('products').select('id', { count: 'exact', head: true }),
       supabase.from('orders').select('id', { count: 'exact', head: true }),
       supabase.from('users').select('id', { count: 'exact', head: true }),
-      supabase
-        .from('orders')
-        .select('total_amount, created_at')
+    supabase
+      .from('orders')
+      .select('total_amount, created_at')
         .eq('payment_status', 'paid'),
-      supabase
-        .from('orders')
-        .select(`
-          *,
-          user:users(email, full_name)
-        `)
-        .order('created_at', { ascending: false })
+    supabase
+      .from('orders')
+      .select(`
+        *,
+        user:users(email, full_name)
+      `)
+      .order('created_at', { ascending: false })
         .limit(10),
       supabase
         .from('orders')
@@ -68,13 +68,25 @@ export default async function AdminDashboard() {
         .eq('status', 'pending'),
     ])
 
-    productsRes = results[0].status === 'fulfilled' ? results[0].value : { count: 0, error: null }
-    ordersRes = results[1].status === 'fulfilled' ? results[1].value : { count: 0, error: null }
-    usersRes = results[2].status === 'fulfilled' ? results[2].value : { count: 0, error: null }
-    revenueRes = results[3].status === 'fulfilled' ? results[3].value : { data: [], error: null }
-    recentOrdersRes = results[4].status === 'fulfilled' ? results[4].value : { data: [], error: null }
-    const pendingRes = results[5].status === 'fulfilled' ? results[5].value : { count: 0, error: null }
-    pendingOrders = pendingRes.count || 0
+    if (results[0].status === 'fulfilled' && !results[0].value.error) {
+      productsRes = results[0].value
+    }
+    if (results[1].status === 'fulfilled' && !results[1].value.error) {
+      ordersRes = results[1].value
+    }
+    if (results[2].status === 'fulfilled' && !results[2].value.error) {
+      usersRes = results[2].value
+    }
+    if (results[3].status === 'fulfilled' && !results[3].value.error) {
+      revenueRes = results[3].value
+    }
+    if (results[4].status === 'fulfilled' && !results[4].value.error) {
+      recentOrdersRes = results[4].value
+    }
+    if (results[5].status === 'fulfilled' && !results[5].value.error) {
+      const pendingRes = results[5].value
+      pendingOrders = pendingRes.count || 0
+    }
   } catch (error) {
     console.error('Error fetching dashboard data:', error)
     // Continue with default values
