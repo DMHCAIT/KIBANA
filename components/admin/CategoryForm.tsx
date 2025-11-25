@@ -9,7 +9,6 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Upload, X } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import Image from 'next/image'
@@ -30,7 +29,6 @@ export function CategoryForm({ category }: CategoryFormProps) {
     seo_title: category?.seo_title || '',
     seo_description: category?.seo_description || '',
   })
-  const supabase = createClient()
   const router = useRouter()
 
   useEffect(() => {
@@ -49,21 +47,22 @@ export function CategoryForm({ category }: CategoryFormProps) {
 
     setUploading(true)
     try {
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-      const filePath = `categories/${fileName}`
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('folder', 'categories')
 
-      const { error: uploadError } = await supabase.storage
-        .from('category-images')
-        .upload(filePath, file)
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      })
 
-      if (uploadError) throw uploadError
+      const result = await response.json()
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('category-images')
-        .getPublicUrl(filePath)
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to upload image')
+      }
 
-      setFormData(prev => ({ ...prev, banner_image: publicUrl }))
+      setFormData(prev => ({ ...prev, banner_image: result.url }))
       toast.success('Image uploaded')
     } catch (error: any) {
       toast.error(error.message || 'Failed to upload image')
@@ -78,32 +77,41 @@ export function CategoryForm({ category }: CategoryFormProps) {
 
     try {
       if (category) {
-        const { error } = await supabase
-          .from('categories')
-          .update({
+        // Update existing category via API
+        const response = await fetch('/api/admin/categories', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: category.id,
             ...formData,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', category.id)
+          }),
+        })
 
-        if (error) throw error
+        const result = await response.json()
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to update category')
+        }
+
         toast.success('Category updated')
       } else {
-        // Get max order
-        const { data: maxOrder } = await supabase
-          .from('categories')
-          .select('order')
-          .order('order', { ascending: false })
-          .limit(1)
+        // Create new category via API
+        const response = await fetch('/api/admin/categories', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        })
 
-        const { error } = await supabase
-          .from('categories')
-          .insert({
-            ...formData,
-            order: (maxOrder?.[0]?.order || 0) + 1,
-          })
+        const result = await response.json()
 
-        if (error) throw error
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to create category')
+        }
+
         toast.success('Category created')
       }
       router.push('/admin/categories')
