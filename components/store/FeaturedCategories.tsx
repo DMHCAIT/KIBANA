@@ -174,6 +174,7 @@ export function FeaturedCategories({ categories }: FeaturedCategoriesProps) {
           </div>
         </div>
       )}
+      </div>
     </section>
   )
 }
