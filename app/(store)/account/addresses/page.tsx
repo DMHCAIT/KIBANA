@@ -7,26 +7,15 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Edit, Trash2, MapPin, Check } from 'lucide-react'
 import { AddressManager } from '@/components/store/AddressManager'
+import { Address } from '@/app/(store)/checkout/page'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 
-interface Address {
-  id: string
-  name: string
-  phone: string
-  address: string
-  city: string
-  state: string
-  zip: string
-  country: string
-  is_default?: boolean
-}
-
 export default function AddressesPage() {
-  const [addresses, setAddresses] = useState<Address[]>([])
+  const [addresses, setAddresses] = useState<(Address & { id: string })[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
-  const [editingAddress, setEditingAddress] = useState<Address | null>(null)
+  const [editingAddress, setEditingAddress] = useState<(Address & { id: string }) | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -47,18 +36,18 @@ export default function AddressesPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    let updated: Address[]
+    let updated: (Address & { id: string })[]
     
     if (editingAddress) {
       // Update existing
       updated = addresses.map(a => 
         a.id === editingAddress.id 
-          ? { ...address, id: editingAddress.id }
+          ? { ...address, id: editingAddress.id } as Address & { id: string }
           : address.is_default ? { ...a, is_default: false } : a
       )
     } else {
       // Add new
-      const newAddress: Address = {
+      const newAddress: Address & { id: string } = {
         ...address,
         id: Date.now().toString(),
       }

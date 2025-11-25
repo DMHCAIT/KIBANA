@@ -10,7 +10,7 @@ import { Address } from '@/app/(store)/checkout/page'
 
 interface AddressManagerProps {
   address: Address | null
-  onSave: (address: Address) => void
+  onSave: (address: Address) => void | Promise<void>
   open?: boolean
   onClose?: () => void
 }
