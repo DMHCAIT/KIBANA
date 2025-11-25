@@ -26,6 +26,7 @@ export function BannerForm({ banner }: BannerFormProps) {
     title: banner?.title || '',
     subtitle: banner?.subtitle || '',
     image_url: banner?.image_url || '',
+    video_url: banner?.video_url || '',
     link_url: banner?.link_url || '',
     position: banner?.position || 'homepage',
     is_active: banner?.is_active ?? true,
@@ -33,6 +34,7 @@ export function BannerForm({ banner }: BannerFormProps) {
     valid_from: banner?.created_at ? new Date(banner.created_at).toISOString().split('T')[0] : '',
     valid_until: banner?.updated_at ? new Date(banner.updated_at).toISOString().split('T')[0] : '',
   })
+  const [uploadingVideo, setUploadingVideo] = useState(false)
   const supabase = createClient()
   const router = useRouter()
 
@@ -65,6 +67,38 @@ export function BannerForm({ banner }: BannerFormProps) {
     }
   }
 
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadingVideo(true)
+    try {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+      const filePath = `banners/videos/${fileName}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('banner-images')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        })
+
+      if (uploadError) throw uploadError
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('banner-images')
+        .getPublicUrl(filePath)
+
+      setFormData(prev => ({ ...prev, video_url: publicUrl }))
+      toast.success('Video uploaded')
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to upload video')
+    } finally {
+      setUploadingVideo(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -77,6 +111,7 @@ export function BannerForm({ banner }: BannerFormProps) {
             title: formData.title,
             subtitle: formData.subtitle,
             image_url: formData.image_url,
+            video_url: formData.video_url || null,
             link_url: formData.link_url,
             position: formData.position,
             is_active: formData.is_active,
@@ -102,6 +137,7 @@ export function BannerForm({ banner }: BannerFormProps) {
             title: formData.title,
             subtitle: formData.subtitle,
             image_url: formData.image_url,
+            video_url: formData.video_url || null,
             link_url: formData.link_url,
             position: formData.position,
             is_active: formData.is_active,
@@ -174,48 +210,95 @@ export function BannerForm({ banner }: BannerFormProps) {
             />
           </div>
 
-          <div>
-            <Label>Banner Image</Label>
-            {formData.image_url ? (
-              <div className="mt-2 relative w-full h-64 rounded-lg overflow-hidden bg-muted border-2">
-                <Image
-                  src={formData.image_url}
-                  alt="Banner"
-                  fill
-                  className="object-cover"
-                />
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="icon"
-                  className="absolute top-2 right-2"
-                  onClick={() => setFormData({ ...formData, image_url: '' })}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            ) : (
-              <div className="mt-2">
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={uploading}
-                  className="hidden"
-                  id="banner-upload"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => document.getElementById('banner-upload')?.click()}
-                  disabled={uploading}
-                >
-                  <Upload className="mr-2 h-4 w-4" />
-                  {uploading ? 'Uploading...' : 'Upload Banner Image'}
-                </Button>
-              </div>
-            )}
-          </div>
+          {formData.position === 'hero' ? (
+            <div>
+              <Label>Hero Video (for Hero Section)</Label>
+              {formData.video_url ? (
+                <div className="mt-2 relative w-full h-64 rounded-lg overflow-hidden bg-muted border-2">
+                  <video
+                    src={formData.video_url}
+                    className="w-full h-full object-cover"
+                    controls
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2"
+                    onClick={() => setFormData({ ...formData, video_url: '' })}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="mt-2">
+                  <Input
+                    type="file"
+                    accept="video/*"
+                    onChange={handleVideoUpload}
+                    disabled={uploadingVideo}
+                    className="hidden"
+                    id="banner-video-upload"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => document.getElementById('banner-video-upload')?.click()}
+                    disabled={uploadingVideo}
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    {uploadingVideo ? 'Uploading...' : 'Upload Hero Video'}
+                  </Button>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Upload a video file for the hero section. Video will be displayed full-screen with no text.
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div>
+              <Label>Banner Image</Label>
+              {formData.image_url ? (
+                <div className="mt-2 relative w-full h-64 rounded-lg overflow-hidden bg-muted border-2">
+                  <Image
+                    src={formData.image_url}
+                    alt="Banner"
+                    fill
+                    className="object-cover"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2"
+                    onClick={() => setFormData({ ...formData, image_url: '' })}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="mt-2">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploading}
+                    className="hidden"
+                    id="banner-upload"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => document.getElementById('banner-upload')?.click()}
+                    disabled={uploading}
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    {uploading ? 'Uploading...' : 'Upload Banner Image'}
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <div>

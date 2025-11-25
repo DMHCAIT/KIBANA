@@ -351,6 +351,7 @@ export interface Database {
           title: string
           subtitle: string | null
           image_url: string
+          video_url: string | null
           link_url: string | null
           position: string
           is_active: boolean
@@ -363,6 +364,7 @@ export interface Database {
           title: string
           subtitle?: string | null
           image_url: string
+          video_url?: string | null
           link_url?: string | null
           position: string
           is_active?: boolean
@@ -375,6 +377,7 @@ export interface Database {
           title?: string
           subtitle?: string | null
           image_url?: string
+          video_url?: string | null
           link_url?: string | null
           position?: string
           is_active?: boolean

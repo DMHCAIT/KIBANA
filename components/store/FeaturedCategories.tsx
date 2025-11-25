@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Category } from '@/types'
 import { Card } from '@/components/ui/card'
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowRight, ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useRef, useState, useEffect } from 'react'
 
@@ -13,19 +13,7 @@ interface FeaturedCategoriesProps {
 }
 
 export function FeaturedCategories({ categories }: FeaturedCategoriesProps) {
-  // Default categories if none provided
-  const defaultCategories = [
-    { id: '1', name: 'Tote Bags', slug: 'tote-bags', description: 'Spacious and versatile', banner_image: null },
-    { id: '2', name: 'Crossbody Bags', slug: 'crossbody-bags', description: 'Hands-free convenience', banner_image: null },
-    { id: '3', name: 'Clutches', slug: 'clutches', description: 'Elegant evening essentials', banner_image: null },
-    { id: '4', name: 'Shoulder Bags', slug: 'shoulder-bags', description: 'Classic and timeless', banner_image: null },
-    { id: '5', name: 'Backpacks', slug: 'backpacks', description: 'Modern and practical', banner_image: null },
-    { id: '6', name: 'Satchels', slug: 'satchels', description: 'Professional and stylish', banner_image: null },
-    { id: '7', name: 'Hobo Bags', slug: 'hobo-bags', description: 'Casual and comfortable', banner_image: null },
-    { id: '8', name: 'Bucket Bags', slug: 'bucket-bags', description: 'Trendy and spacious', banner_image: null },
-  ]
-
-  const displayCategories = categories.length > 0 ? categories : defaultCategories
+  const displayCategories = categories || []
   const scrollRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(true)
@@ -75,32 +63,48 @@ export function FeaturedCategories({ categories }: FeaturedCategoriesProps) {
         </p>
       </div>
       
-      <div className="relative">
-        {/* Scroll Buttons */}
-        {canScrollLeft && (
-          <Button
-            variant="outline"
-            size="icon"
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-12 w-12 rounded-full bg-white shadow-lg border-gray-200 hover:bg-gray-50 hidden md:flex"
-            onClick={() => scroll('left')}
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-        )}
-        {canScrollRight && (
-          <Button
-            variant="outline"
-            size="icon"
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-12 w-12 rounded-full bg-white shadow-lg border-gray-200 hover:bg-gray-50 hidden md:flex"
-            onClick={() => scroll('right')}
-          >
-            <ChevronRight className="h-6 w-6" />
-          </Button>
-        )}
+      {displayCategories.length === 0 ? (
+        <div className="text-center py-16 md:py-24">
+          <div className="max-w-md mx-auto">
+            <div className="h-24 w-24 mx-auto mb-6 rounded-full bg-gray-100 flex items-center justify-center">
+              <ShoppingBag className="h-12 w-12 text-gray-400" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2 text-gray-900">No Categories Yet</h3>
+            <p className="text-gray-600 mb-6">
+              Add categories from the admin panel to display them here
+            </p>
+            <Button asChild>
+              <Link href="/admin/categories/new">Add Categories</Link>
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="relative">
+          {/* Scroll Buttons */}
+          {canScrollLeft && (
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-12 w-12 rounded-full bg-white shadow-lg border-gray-200 hover:bg-gray-50 hidden md:flex"
+              onClick={() => scroll('left')}
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </Button>
+          )}
+          {canScrollRight && (
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-12 w-12 rounded-full bg-white shadow-lg border-gray-200 hover:bg-gray-50 hidden md:flex"
+              onClick={() => scroll('right')}
+            >
+              <ChevronRight className="h-6 w-6" />
+            </Button>
+          )}
 
-        {/* Responsive Grid for Desktop, Horizontal Scroll for Mobile */}
-        <div className="hidden lg:grid grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6 xl:gap-8">
-          {displayCategories.slice(0, 8).map((category, index) => (
+          {/* Responsive Grid for Desktop, Horizontal Scroll for Mobile */}
+          <div className="hidden lg:grid grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6 xl:gap-8">
+            {displayCategories.slice(0, 8).map((category, index) => (
             <Link key={category.id || index} href={`/categories/${category.slug || category.id}`}>
               <Card className="group overflow-hidden cursor-pointer border border-gray-200 hover:border-black transition-all duration-300 bg-white h-full hover:shadow-xl">
                 <div className="relative h-64 md:h-72 lg:h-80 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
@@ -190,9 +194,62 @@ export function FeaturedCategories({ categories }: FeaturedCategoriesProps) {
               </Link>
             </div>
           ))}
-        </div>
-      </div>
+          </div>
 
+          {/* Horizontal Scroll Container for Mobile/Tablet */}
+          <div
+            ref={scrollRef}
+            className="flex lg:hidden gap-4 md:gap-5 overflow-x-auto scrollbar-hide pb-4 scroll-smooth -mx-4 px-4"
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
+          >
+            {displayCategories.map((category, index) => (
+              <div
+                key={category.id || index}
+                className="shrink-0 w-[280px] sm:w-[320px]"
+              >
+                <Link href={`/categories/${category.slug || category.id}`}>
+                  <Card className="group overflow-hidden cursor-pointer border border-gray-200 hover:border-black transition-all duration-300 bg-white h-full">
+                    <div className="relative h-64 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+                      {category.banner_image ? (
+                        <Image
+                          src={category.banner_image}
+                          alt={category.name}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-700"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <span className="text-6xl font-bold text-gray-200">
+                            {category.name.charAt(0)}
+                          </span>
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+                    <div className="p-5 text-center">
+                      <h3 className="text-lg font-bold mb-2 text-gray-900">
+                        {category.name.toUpperCase()}
+                      </h3>
+                      {category.description && (
+                        <p className="text-sm text-gray-600 line-clamp-2 mb-4">
+                          {category.description}
+                        </p>
+                      )}
+                      <div className="inline-flex items-center gap-2 text-sm font-semibold text-black group-hover:gap-3 transition-all">
+                        <span>Shop Now</span>
+                        <ArrowRight className="h-4 w-4" />
+                      </div>
+                    </div>
+                  </Card>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   )
 }

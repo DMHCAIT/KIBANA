@@ -4,9 +4,10 @@ import { StoreFooter } from '@/components/store/StoreFooter'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ShoppingBag } from 'lucide-react'
 import { Metadata } from 'next'
 import { Category } from '@/types'
+import { Button } from '@/components/ui/button'
 
 export const metadata: Metadata = {
   title: 'Categories | KIBANA - Luxury Handbags',
@@ -22,19 +23,7 @@ export default async function CategoriesPage() {
     .eq('is_active', true)
     .order('order', { ascending: true })
 
-  // Default categories if none in database
-  const defaultCategories = [
-    { id: '1', name: 'Tote Bags', slug: 'tote-bags', description: 'Spacious and versatile handbags perfect for everyday use', banner_image: null },
-    { id: '2', name: 'Crossbody Bags', slug: 'crossbody-bags', description: 'Hands-free convenience with style', banner_image: null },
-    { id: '3', name: 'Clutches', slug: 'clutches', description: 'Elegant evening essentials', banner_image: null },
-    { id: '4', name: 'Shoulder Bags', slug: 'shoulder-bags', description: 'Classic and timeless designs', banner_image: null },
-    { id: '5', name: 'Backpacks', slug: 'backpacks', description: 'Modern and practical for the active lifestyle', banner_image: null },
-    { id: '6', name: 'Satchels', slug: 'satchels', description: 'Professional and stylish for work', banner_image: null },
-    { id: '7', name: 'Hobo Bags', slug: 'hobo-bags', description: 'Casual and comfortable designs', banner_image: null },
-    { id: '8', name: 'Bucket Bags', slug: 'bucket-bags', description: 'Trendy and spacious options', banner_image: null },
-  ]
-
-  const displayCategories: (Category | { id: string; name: string; slug: string; description: string | null; banner_image: string | null })[] = (categories && categories.length > 0) ? categories : defaultCategories
+  const displayCategories: Category[] = categories || []
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
@@ -58,9 +47,25 @@ export default async function CategoriesPage() {
           </div>
 
           {/* Centered Categories Grid */}
-          <div className="flex justify-center">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 max-w-7xl">
-              {displayCategories.map((category: Category | { id: string; name: string; slug: string; description: string | null; banner_image: string | null }) => (
+          {displayCategories.length === 0 ? (
+            <div className="text-center py-16 md:py-24">
+              <div className="max-w-md mx-auto">
+                <div className="h-24 w-24 mx-auto mb-6 rounded-full bg-gray-100 flex items-center justify-center">
+                  <ShoppingBag className="h-12 w-12 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-900">No Categories Yet</h3>
+                <p className="text-gray-600 mb-6">
+                  Add categories from the admin panel to display them here
+                </p>
+                <Button asChild>
+                  <Link href="/admin/categories/new">Add Categories</Link>
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 max-w-7xl">
+                {displayCategories.map((category: Category) => (
                 <Link key={category.id} href={`/categories/${category.slug || category.id}`}>
                   <Card className="group overflow-hidden cursor-pointer border-0 shadow-lg hover:shadow-2xl transition-all duration-500 h-full bg-gradient-to-br from-white via-gray-50/30 to-white rounded-[2rem]">
                     {/* Image Section */}
@@ -99,9 +104,10 @@ export default async function CategoriesPage() {
                     </CardContent>
                   </Card>
                 </Link>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
       <StoreFooter />
