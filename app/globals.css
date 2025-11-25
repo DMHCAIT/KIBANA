@@ -19,7 +19,7 @@
     --accent-foreground: 0 0% 9%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 90%; /* Subtle gray border */
+    --border: 0 0% 90%; /* Subtle gray border - thin for luxury */
     --input: 0 0% 90%;
     --ring: 0 0% 9%;
     --radius: 0.5rem;
@@ -55,6 +55,58 @@
   body {
     background-color: #ffffff;
     color: hsl(var(--foreground));
+    font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  
+  /* Typography Hierarchy */
+  .font-logo {
+    font-family: var(--font-playfair), 'Didot', 'Bodoni MT', serif;
+  }
+  
+  .font-hero {
+    font-family: var(--font-playfair), 'Didot', 'Bodoni MT', serif;
+    font-weight: 600;
+  }
+  
+  .font-menu {
+    font-family: var(--font-inter), 'Helvetica Neue', -apple-system, sans-serif;
+    font-weight: 500;
+  }
+  
+  .font-body {
+    font-family: var(--font-inter), var(--font-lato), -apple-system, sans-serif;
+    font-size: 14px;
+  }
+  
+  @media (min-width: 768px) {
+    .font-body {
+      font-size: 16px;
+    }
+  }
+  
+  /* Luxury Design - Thin Borders */
+  .border-luxury {
+    border-width: 0.5px;
+  }
+  
+  /* Luxury Design - Big Margins */
+  .section-luxury {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+  
+  @media (min-width: 768px) {
+    .section-luxury {
+      padding-top: 8rem;
+      padding-bottom: 8rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .section-luxury {
+      padding-top: 10rem;
+      padding-bottom: 10rem;
+    }
   }
 }
 

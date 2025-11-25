@@ -11,7 +11,7 @@ export function StoreHeader() {
   const [searchQuery, setSearchQuery] = useState('')
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white">
+    <header className="sticky top-0 z-50 w-full border-luxury border-b border-gray-200 bg-white">
       <div className="container flex h-16 items-center justify-between px-4 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center group">
@@ -53,19 +53,19 @@ export function StoreHeader() {
         <nav className="hidden lg:flex items-center space-x-8">
           <Link 
             href="/products" 
-            className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors"
+            className="font-menu text-sm text-gray-900 hover:text-gray-600 transition-colors"
           >
             Shop
           </Link>
           <Link 
             href="/categories" 
-            className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors"
+            className="font-menu text-sm text-gray-900 hover:text-gray-600 transition-colors"
           >
             Categories
           </Link>
           <Link 
             href="/about" 
-            className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors"
+            className="font-menu text-sm text-gray-900 hover:text-gray-600 transition-colors"
           >
             About
           </Link>

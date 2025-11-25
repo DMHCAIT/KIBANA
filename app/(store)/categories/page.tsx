@@ -29,21 +29,11 @@ export default async function CategoriesPage() {
     <div className="flex min-h-screen flex-col bg-white">
       <StoreHeader />
       <main className="flex-1 bg-white">
-        <div className="container px-4 py-16">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 mb-6 px-5 py-2.5 bg-gradient-to-r from-pink-50 via-purple-50 to-blue-50 rounded-full border border-pink-100/50 shadow-sm">
-              <div className="w-2 h-2 bg-gradient-to-r from-pink-400 to-purple-400 rounded-full animate-pulse" />
-              <span className="text-sm font-bold text-gray-700 uppercase tracking-wider">Categories</span>
-              <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
-            </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6">
-              <span className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
-                Shop by Category
-              </span>
+        <div className="container px-4 py-16 md:py-24 lg:py-32">
+          <div className="text-center mb-16 md:mb-20 lg:mb-24">
+            <h1 className="font-hero text-4xl md:text-5xl lg:text-6xl mb-8 md:mb-10 text-gray-900 leading-tight tracking-tight">
+              Shop by Category
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Discover our curated collection of luxury handbags, organized by style and purpose
-            </p>
           </div>
 
           {/* Centered Categories Grid */}
@@ -53,8 +43,8 @@ export default async function CategoriesPage() {
                 <div className="h-24 w-24 mx-auto mb-6 rounded-full bg-gray-100 flex items-center justify-center">
                   <ShoppingBag className="h-12 w-12 text-gray-400" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-gray-900">No Categories Yet</h3>
-                <p className="text-gray-600 mb-6">
+                <h3 className="font-hero text-xl mb-2 text-gray-900">No Categories Yet</h3>
+                <p className="font-body text-gray-600 mb-6">
                   Add categories from the admin panel to display them here
                 </p>
                 <Button asChild>
@@ -64,46 +54,36 @@ export default async function CategoriesPage() {
             </div>
           ) : (
             <div className="flex justify-center">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 max-w-7xl">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 xl:gap-12 max-w-7xl w-full">
                 {displayCategories.map((category: Category) => (
-                <Link key={category.id} href={`/categories/${category.slug || category.id}`}>
-                  <Card className="group overflow-hidden cursor-pointer border-0 shadow-lg hover:shadow-2xl transition-all duration-500 h-full bg-gradient-to-br from-white via-gray-50/30 to-white rounded-[2rem]">
-                    {/* Image Section */}
-                    <div className="relative h-64 overflow-hidden rounded-t-[2rem] bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100">
-                      {category.banner_image ? (
-                        <Image
-                          src={category.banner_image}
-                          alt={category.name}
-                          fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-700"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <span className="text-8xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent opacity-60 group-hover:opacity-100 transition-opacity">
-                            {category.name.charAt(0)}
-                          </span>
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                    
-                    {/* Content Section */}
-                    <CardContent className="p-6 bg-gradient-to-br from-white via-gray-50/30 to-white rounded-b-[2rem]">
-                      <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors text-gray-900">
-                        {category.name}
-                      </h3>
-                      {category.description && (
-                        <p className="text-sm text-gray-600 line-clamp-2 mb-4 leading-relaxed">
-                          {category.description}
-                        </p>
-                      )}
-                      <div className="flex items-center gap-2 text-primary font-semibold text-sm group-hover:gap-3 transition-all">
-                        <span>Shop Now</span>
-                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  <Link key={category.id} href={`/categories/${category.slug || category.id}`}>
+                    <Card className="group overflow-hidden cursor-pointer border-luxury border-gray-200 hover:border-gray-400 transition-all duration-300 bg-white h-full">
+                      {/* Image Section */}
+                      <div className="relative h-80 lg:h-96 overflow-hidden bg-gray-50">
+                        {category.banner_image ? (
+                          <Image
+                            src={category.banner_image}
+                            alt={category.name}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-700"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <span className="text-8xl font-hero text-gray-200">
+                              {category.name.charAt(0)}
+                            </span>
+                          </div>
+                        )}
                       </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                      
+                      {/* Content Section */}
+                      <CardContent className="p-6 md:p-8 text-center">
+                        <h3 className="font-menu text-base md:text-lg mb-2 text-gray-900 tracking-wide">
+                          {category.name.toUpperCase()}
+                        </h3>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 ))}
               </div>
             </div>
