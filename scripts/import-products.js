@@ -28,7 +28,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   },
 })
 
-// Product data from spreadsheet
+// Product data from spreadsheet - matching actual folder names
 const productsData = [
   {
     name: 'VISTARA TOTE',
@@ -46,8 +46,8 @@ const productsData = [
     category: 'Sling Bag',
     price: 3999,
     colors: [
-      { name: 'Teal Blue / Dark Blue', folder: 'PRIZMA SLING png ( dark green )png' },
-      { name: 'Mint Green / Pastel Green', folder: 'PRIZMA SLING png ( PASTEL GREEN ) )' },
+      { name: 'Dark Green', folder: 'PRIZMA SLING png ( dark green )png' },
+      { name: 'Pastel Green', folder: 'PRIZMA SLING png ( PASTEL GREEN ) )' },
       { name: 'Mocha Tan', folder: 'PRIZMA SLING png ( brown )' },
       { name: 'Milky Blue', folder: 'PRIZMA SLING png (milky blue ) )' },
     ],
@@ -57,10 +57,10 @@ const productsData = [
     category: 'Backpack',
     price: 4499,
     colors: [
-      { name: 'Teal Blue / Dark Blue', folder: 'vistapack( dark green )' },
-      { name: 'Mint Green / Pastel Green', folder: 'VISTAPACK( green )' },
+      { name: 'Dark Green', folder: 'vistapack( dark green )' },
+      { name: 'Green', folder: 'VISTAPACK( green )' },
       { name: 'Mocha Tan', folder: 'vistapack ( brown )' },
-      { name: 'Milky Blue', folder: 'vistapack ( blue )' },
+      { name: 'Blue', folder: 'vistapack ( blue )' },
     ],
   },
   {
@@ -68,8 +68,8 @@ const productsData = [
     category: 'Laptop Bag',
     price: 6499,
     colors: [
-      { name: 'Teal Blue / Dark Blue', folder: 'SANDESH LAPTOP BAG dark blue( png )' },
-      { name: 'Mint Green / Pastel Green', folder: 'SANDESH LAPTOP BAG png ( green)' },
+      { name: 'Dark Blue', folder: 'SANDESH LAPTOP BAG dark blue( png )' },
+      { name: 'Green', folder: 'SANDESH LAPTOP BAG png ( green)' },
       { name: 'Mocha Tan', folder: 'SANDESH LAPTOP BAG png brown' },
       { name: 'Milky Blue', folder: 'SANDESH LAPTOP BAG ( MILKY BLUE)' },
     ],
@@ -79,8 +79,8 @@ const productsData = [
     category: 'Clutch',
     price: 2199,
     colors: [
-      { name: 'Teal Blue / Dark Blue', folder: 'lekha teal blue' },
-      { name: 'Mint Green / Pastel Green', folder: 'lekha pastel green png' },
+      { name: 'Teal Blue', folder: 'lekha teal blue' },
+      { name: 'Pastel Green', folder: 'lekha pastel green png' },
       { name: 'Mocha Tan', folder: 'lekha png brown )' },
       { name: 'Milky Blue', folder: 'lekha milky blue' },
     ],
@@ -90,10 +90,8 @@ const productsData = [
     category: 'Wallet',
     price: 1999,
     colors: [
-      { name: 'Teal Blue / Dark Blue', folder: 'lekha png (teal blue)' },
-      { name: 'Mint Green / Pastel Green', folder: 'lekha png ( pastel green )' },
-      { name: 'Mocha Tan', folder: 'lekha png brown )' },
-      { name: 'Milky Blue', folder: 'lekha milky blue' },
+      { name: 'Teal Blue', folder: 'lekha png ( pastel green )' },
+      { name: 'Pastel Green', folder: 'lekha png ( pastel green )' },
     ],
   },
 ]
@@ -102,42 +100,54 @@ const imagesBasePath = path.join(__dirname, '../New Folder With Items')
 
 // Helper function to find image files in a folder
 function findImagesInFolder(folderName) {
-  const possiblePaths = [
-    folderName,
-    folderName.replace(/[()]/g, ''),
-    folderName.replace(/[()]/g, '').trim(),
-    folderName.toLowerCase(),
-    folderName.toUpperCase(),
-  ]
-
-  for (const possiblePath of possiblePaths) {
-    const fullPath = path.join(imagesBasePath, possiblePath)
-    if (fs.existsSync(fullPath)) {
-      const files = fs.readdirSync(fullPath)
-        .filter(file => /\.(png|jpg|jpeg)$/i.test(file))
-        .sort()
-        .map(file => path.join(fullPath, file))
-      
-      if (files.length > 0) {
-        return files
+  // Normalize folder name for matching
+  const normalize = (str) => str.toLowerCase().replace(/[()]/g, '').trim().replace(/\s+/g, ' ')
+  
+  const normalizedTarget = normalize(folderName)
+  const allFolders = fs.readdirSync(imagesBasePath)
+  
+  // Try exact match first
+  for (const folder of allFolders) {
+    if (normalize(folder) === normalizedTarget) {
+      const fullPath = path.join(imagesBasePath, folder)
+      if (fs.statSync(fullPath).isDirectory()) {
+        const files = fs.readdirSync(fullPath)
+          .filter(file => /\.(png|jpg|jpeg)$/i.test(file))
+          .sort()
+          .map(file => path.join(fullPath, file))
+        
+        if (files.length > 0) {
+          return files
+        }
       }
     }
   }
 
-  // Try partial matches
-  const allFolders = fs.readdirSync(imagesBasePath)
-  const matchingFolder = allFolders.find(folder => 
-    folder.toLowerCase().includes(folderName.toLowerCase().replace(/[()]/g, '').trim())
-  )
-
-  if (matchingFolder) {
-    const fullPath = path.join(imagesBasePath, matchingFolder)
-    const files = fs.readdirSync(fullPath)
-      .filter(file => /\.(png|jpg|jpeg)$/i.test(file))
-      .sort()
-      .map(file => path.join(fullPath, file))
+  // Try partial/fuzzy matches
+  for (const folder of allFolders) {
+    const normalizedFolder = normalize(folder)
+    const targetWords = normalizedTarget.split(' ').filter(w => w.length > 2)
+    const folderWords = normalizedFolder.split(' ').filter(w => w.length > 2)
     
-    return files.length > 0 ? files : []
+    // Check if most words match
+    const matchingWords = targetWords.filter(word => 
+      folderWords.some(fw => fw.includes(word) || word.includes(fw))
+    )
+    
+    if (matchingWords.length >= Math.min(2, targetWords.length)) {
+      const fullPath = path.join(imagesBasePath, folder)
+      if (fs.statSync(fullPath).isDirectory()) {
+        const files = fs.readdirSync(fullPath)
+          .filter(file => /\.(png|jpg|jpeg)$/i.test(file))
+          .sort()
+          .map(file => path.join(fullPath, file))
+        
+        if (files.length > 0) {
+          console.log(`    📁 Matched folder: "${folder}" for "${folderName}"`)
+          return files
+        }
+      }
+    }
   }
 
   return []
@@ -154,12 +164,27 @@ async function uploadImageToStorage(filePath, productName, colorName, imageIndex
 
     const fileBuffer = fs.readFileSync(filePath)
 
-    const { data, error } = await supabase.storage
-      .from('category-images') // Using existing bucket, or create 'product-images' bucket
+    // Try product-images bucket first, fallback to category-images
+    let bucket = 'product-images'
+    let { data, error } = await supabase.storage
+      .from(bucket)
       .upload(storagePath, fileBuffer, {
         contentType: `image/${fileExt.slice(1)}`,
         upsert: true,
       })
+
+    // If product-images bucket doesn't exist, try category-images
+    if (error && error.message.includes('not found')) {
+      bucket = 'category-images'
+      const result = await supabase.storage
+        .from(bucket)
+        .upload(storagePath, fileBuffer, {
+          contentType: `image/${fileExt.slice(1)}`,
+          upsert: true,
+        })
+      data = result.data
+      error = result.error
+    }
 
     if (error) {
       console.error(`  ❌ Failed to upload ${fileName}:`, error.message)
@@ -167,7 +192,7 @@ async function uploadImageToStorage(filePath, productName, colorName, imageIndex
     }
 
     const { data: { publicUrl } } = supabase.storage
-      .from('category-images')
+      .from(bucket)
       .getPublicUrl(storagePath)
 
     return publicUrl
@@ -290,28 +315,54 @@ async function createProduct(productData, categoryId) {
       continue
     }
 
-    // Create variant
-    const sku = `${slug}-${color.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`
-    
-    const { data: variantData, error: variantError } = await supabase
+    // Check if variant already exists
+    const { data: existingVariant } = await supabase
       .from('product_variants')
-      .insert({
-        product_id: productId,
-        color: color.name,
-        sku,
-        price: productData.price,
-        stock_quantity: 10,
-        is_active: true,
-      })
-      .select()
+      .select('id')
+      .eq('product_id', productId)
+      .eq('color', color.name)
       .single()
 
-    if (variantError) {
-      console.error(`    ❌ Failed to create variant:`, variantError.message)
-      continue
+    let variantId
+    if (existingVariant) {
+      variantId = existingVariant.id
+      console.log(`    ✓ Variant "${color.name}" already exists`)
+    } else {
+      // Create variant
+      const sku = `${slug}-${color.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`
+      
+      const { data: variantData, error: variantError } = await supabase
+        .from('product_variants')
+        .insert({
+          product_id: productId,
+          color: color.name,
+          sku,
+          price: productData.price,
+          stock_quantity: 10,
+          is_active: true,
+        })
+        .select()
+        .single()
+
+      if (variantError) {
+        console.error(`    ❌ Failed to create variant:`, variantError.message)
+        continue
+      }
+
+      variantId = variantData.id
+      console.log(`    ✓ Created variant "${color.name}"`)
     }
 
-    const variantId = variantData.id
+    // Check if images already exist for this variant
+    const { data: existingImages } = await supabase
+      .from('product_images')
+      .select('id')
+      .eq('variant_id', variantId)
+
+    if (existingImages && existingImages.length > 0) {
+      console.log(`    ⚠️  Images already exist for variant "${color.name}", skipping upload`)
+      continue
+    }
 
     // Upload and create images
     for (let i = 0; i < imageFiles.length; i++) {
@@ -321,7 +372,7 @@ async function createProduct(productData, categoryId) {
       const imageUrl = await uploadImageToStorage(imagePath, productData.name, color.name, i)
 
       if (imageUrl) {
-        await supabase
+        const { error: imageError } = await supabase
           .from('product_images')
           .insert({
             product_id: productId,
@@ -332,7 +383,11 @@ async function createProduct(productData, categoryId) {
             is_primary: i === 0,
           })
 
-        console.log(`      ✓ Uploaded image ${i + 1}`)
+        if (imageError) {
+          console.error(`      ❌ Failed to save image:`, imageError.message)
+        } else {
+          console.log(`      ✓ Uploaded and saved image ${i + 1}`)
+        }
       }
     }
   }
