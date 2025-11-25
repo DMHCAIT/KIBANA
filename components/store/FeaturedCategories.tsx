@@ -54,7 +54,7 @@ export function FeaturedCategories({ categories }: FeaturedCategoriesProps) {
       <div className="container px-4 sm:px-6 lg:px-8 mx-auto">
         <div className="mb-12 md:mb-16 lg:mb-20 text-center max-w-3xl mx-auto">
           <h2 className="font-hero text-4xl md:text-5xl lg:text-6xl mb-6 md:mb-8 text-gray-900 leading-tight tracking-tight">
-            Shop by Category
+            Collections
           </h2>
         </div>
       

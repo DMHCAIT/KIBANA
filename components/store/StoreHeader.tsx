@@ -58,10 +58,10 @@ export function StoreHeader() {
             Shop
           </Link>
           <Link 
-            href="/categories" 
+            href="/collections" 
             className="font-menu text-sm text-gray-900 hover:text-gray-600 transition-colors"
           >
-            Categories
+            Collections
           </Link>
           <Link 
             href="/about" 

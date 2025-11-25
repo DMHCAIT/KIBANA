@@ -27,8 +27,8 @@ export function StoreFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/categories" className="text-gray-600 hover:text-black transition-colors">
-                  Categories
+                <Link href="/collections" className="text-gray-600 hover:text-black transition-colors">
+                  Collections
                 </Link>
               </li>
               <li>
