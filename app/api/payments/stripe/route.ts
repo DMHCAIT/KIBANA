@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createClient } from '@/lib/supabase/server'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-11-17.clover',
-})
+function getStripeClient() {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return null
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2025-11-17.clover',
+  })
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,6 +21,14 @@ export async function POST(request: NextRequest) {
     }
 
     const { amount, orderId, items } = await request.json()
+
+    const stripe = getStripeClient()
+    if (!stripe) {
+      return NextResponse.json(
+        { error: 'Stripe is not configured' },
+        { status: 500 }
+      )
+    }
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
@@ -57,6 +70,14 @@ export async function GET(request: NextRequest) {
 
     if (!sessionId) {
       return NextResponse.json({ error: 'Session ID required' }, { status: 400 })
+    }
+
+    const stripe = getStripeClient()
+    if (!stripe) {
+      return NextResponse.json(
+        { error: 'Stripe is not configured' },
+        { status: 500 }
+      )
     }
 
     const session = await stripe.checkout.sessions.retrieve(sessionId)

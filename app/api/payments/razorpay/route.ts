@@ -3,10 +3,15 @@ import Razorpay from 'razorpay'
 import { createClient } from '@/lib/supabase/server'
 import * as crypto from 'crypto'
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY!,
-  key_secret: process.env.RAZORPAY_SECRET!,
-})
+function getRazorpayClient() {
+  if (!process.env.RAZORPAY_KEY || !process.env.RAZORPAY_SECRET) {
+    return null
+  }
+  return new Razorpay({
+    key_id: process.env.RAZORPAY_KEY,
+    key_secret: process.env.RAZORPAY_SECRET,
+  })
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,6 +23,14 @@ export async function POST(request: NextRequest) {
     }
 
     const { amount, orderId } = await request.json()
+
+    const razorpay = getRazorpayClient()
+    if (!razorpay) {
+      return NextResponse.json(
+        { error: 'Razorpay is not configured' },
+        { status: 500 }
+      )
+    }
 
     // Create Razorpay order
     const options = {
@@ -48,10 +61,17 @@ export async function PUT(request: NextRequest) {
   try {
     const { orderId, paymentId, signature } = await request.json()
 
+    if (!process.env.RAZORPAY_SECRET) {
+      return NextResponse.json(
+        { error: 'Razorpay is not configured' },
+        { status: 500 }
+      )
+    }
+
     // Verify payment signature
     const text = `${orderId}|${paymentId}`
     const generatedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_SECRET!)
+      .createHmac('sha256', process.env.RAZORPAY_SECRET)
       .update(text)
       .digest('hex')
 
