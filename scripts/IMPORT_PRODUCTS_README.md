@@ -1,96 +1,141 @@
 # Product Import Script
 
-This script imports all products from your spreadsheet data into the Supabase database.
+This script imports all products from the spreadsheet data into your Supabase database.
 
 ## Prerequisites
 
-1. **Environment Variables**: Make sure your `.env.local` file has:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-   ```
+1. **Supabase Storage Buckets Created:**
+   - Go to Supabase Dashboard → Storage
+   - Create a bucket named `product-images` (Public)
+   - If it doesn't exist, the script will try `category-images` as fallback
 
-2. **Supabase Storage Bucket**: 
-   - The script uses the `category-images` bucket for storing product images
-   - Make sure this bucket exists and has public access enabled
-   - Or create a new `product-images` bucket and update the script
+2. **Environment Variables:**
+   - Make sure `.env.local` has:
+     ```
+     NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+     SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+     ```
 
-3. **Image Folders**: 
-   - Ensure the `New Folder With Items` directory exists in the project root
-   - All product images should be organized in subfolders matching the folder names in the spreadsheet
+3. **Image Folders:**
+   - Images should be in: `kibana/New Folder With Items/`
+   - The script will automatically match folder names to product colors
 
-## Products Being Imported
+## Products to be Imported
 
-1. **VISTARA TOTE** - Tote Bag - ₹4,999
+Based on your spreadsheet:
+
+1. **VISTARA TOTE** - ₹4,999
+   - Category: Tote Bag
    - Colors: Teal Blue/Dark Blue, Mint Green/Pastel Green, Mocha Tan, Milky Blue
 
-2. **PRIZMA SLING** - Sling Bag - ₹3,999
-   - Colors: Teal Blue/Dark Blue, Mint Green/Pastel Green, Mocha Tan, Milky Blue
+2. **PRIZMA SLING** - ₹3,999
+   - Category: Sling Bag
+   - Colors: Dark Green, Pastel Green, Mocha Tan, Milky Blue
 
-3. **VISTAPACK** - Backpack - ₹4,499
-   - Colors: Teal Blue/Dark Blue, Mint Green/Pastel Green, Mocha Tan, Milky Blue
+3. **VISTAPACK** - ₹4,499
+   - Category: Backpack
+   - Colors: Dark Green, Green, Mocha Tan, Blue
 
-4. **SANDESH LAPTOP BAG** - Laptop Bag - ₹6,499
-   - Colors: Teal Blue/Dark Blue, Mint Green/Pastel Green, Mocha Tan, Milky Blue
+4. **SANDESH LAPTOP BAG** - ₹6,499
+   - Category: Laptop Bag
+   - Colors: Dark Blue, Green, Mocha Tan, Milky Blue
 
-5. **Lekha Wallet (Clutch)** - Clutch - ₹2,199
-   - Colors: Teal Blue/Dark Blue, Mint Green/Pastel Green, Mocha Tan, Milky Blue
+5. **Lekha Wallet (Clutch)** - ₹2,199
+   - Category: Clutch
+   - Colors: Teal Blue, Pastel Green, Mocha Tan, Milky Blue
 
-6. **Lekha Wallet (Wallet)** - Wallet - ₹1,999
-   - Colors: Teal Blue/Dark Blue, Mint Green/Pastel Green, Mocha Tan, Milky Blue
+6. **Lekha Wallet (Wallet)** - ₹2,199
+   - Category: Wallet
+   - Colors: Teal Blue, Pastel Green
 
-## Usage
+## How to Run
+
+### Option 1: Command Line (Recommended)
 
 ```bash
-# From the project root
+cd kibana
 node scripts/import-products.js
 ```
 
+### Option 2: From Admin Panel (Coming Soon)
+
+An API endpoint will be added to run imports from the admin panel.
+
 ## What the Script Does
 
-1. **Creates Categories**: Creates all unique categories (Tote Bag, Sling Bag, Backpack, Laptop Bag, Clutch, Wallet)
+1. **Creates Categories:**
+   - Tote Bag
+   - Sling Bag
+   - Backpack
+   - Laptop Bag
+   - Clutch
+   - Wallet
 
-2. **Creates Products**: Creates each product with:
-   - Name, slug, brand, price
-   - Category association
-   - Active status
+2. **Creates Products:**
+   - Each product with name, price, description
+   - Links to appropriate category
 
-3. **Creates Variants**: For each color option:
-   - Creates a product variant with color name
-   - Generates unique SKU
-   - Sets stock quantity
+3. **Creates Variants:**
+   - One variant per color option
+   - Each variant has SKU, price, stock quantity
 
-4. **Uploads Images**: 
-   - Finds images in the matching folder
+4. **Uploads Images:**
+   - Finds images in matching folders
    - Uploads to Supabase Storage
-   - Creates product_image records linked to variants
+   - Links images to products and variants
    - Sets first image as primary
 
-## Image Folder Mapping
+## Folder Matching
 
-The script automatically matches image folders based on:
-- Exact folder name match
-- Case-insensitive partial matches
-- Removes special characters for matching
+The script uses fuzzy matching to find image folders. It will:
+- Try exact folder name match
+- Try normalized matches (removing spaces, parentheses)
+- Try partial word matches
 
-## Notes
-
-- If a category or product already exists (by slug), it will be updated instead of creating a duplicate
-- Images are uploaded to: `products/{product-name}/{color-name}/{index}.{ext}`
-- The script will skip variants if no images are found for that color
-- All products are set to `is_active: true` and `stock_status: 'in_stock'`
+Example: `png( teal blue` will match folders like:
+- `png( teal blue`
+- `png(teal blue)`
+- `png (teal blue)`
 
 ## Troubleshooting
 
-**Error: "Missing Supabase credentials"**
-- Check that `.env.local` exists and has the correct variables
+### "No images found for folder"
+- Check that the folder name in the script matches your actual folder name
+- Check that the folder contains PNG/JPG files
+- The script will show which folder it matched
 
-**Error: "Failed to upload image"**
-- Check that the storage bucket exists and has proper permissions
-- Verify image files exist in the expected folders
+### "Failed to upload image"
+- Check that the storage bucket exists
+- Check that the service role key has storage permissions
+- Check file size limits
 
-**No images found for folder**
-- Check folder names match exactly (case-insensitive)
-- Verify images are in PNG, JPG, or JPEG format
-- Check the folder structure in `New Folder With Items`
+### "Category already exists"
+- This is normal - the script will reuse existing categories
+- Products will be updated if they already exist
 
+### "Variant already exists"
+- The script will skip creating duplicate variants
+- Images will only be uploaded if the variant has no images
+
+## After Import
+
+1. **Verify in Admin Panel:**
+   - Go to `/admin/products`
+   - Check that all products are listed
+   - Click on each product to verify images
+
+2. **Check Categories:**
+   - Go to `/admin/categories`
+   - Verify all categories are created
+
+3. **Test Storefront:**
+   - Visit `/products` to see all products
+   - Visit `/collections` to see categories
+   - Click on products to see variants and images
+
+## Notes
+
+- The script is idempotent - you can run it multiple times safely
+- Existing products/variants will be updated, not duplicated
+- Images are only uploaded if the variant has no existing images
+- Stock quantity is set to 10 for all variants (update manually if needed)
