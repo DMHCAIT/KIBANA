@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -16,7 +16,7 @@ import { toast } from 'sonner'
 import { StoreHeader } from '@/components/store/StoreHeader'
 import { StoreFooter } from '@/components/store/StoreFooter'
 
-export default function SearchPage() {
+function SearchContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [query, setQuery] = useState(searchParams.get('q') || '')
@@ -106,21 +106,8 @@ export default function SearchPage() {
   ]
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <StoreHeader />
-      <main className="flex-1">
-        <div className="container px-4 py-12">
-          {/* Search Header */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 mb-6 px-5 py-2.5 bg-black text-white rounded-full shadow-sm">
-              <span className="text-sm font-bold uppercase tracking-wider">Search</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 text-gray-900">
-              Search Products
-            </h1>
-          </div>
-          <div className="mb-8">
-        
+    <>
+      <div className="mb-8">
         {/* Search Bar */}
         <form onSubmit={handleSearch} className="relative mb-4">
           <div className="relative">
@@ -326,6 +313,47 @@ export default function SearchPage() {
           </p>
         </div>
       )}
+      </div>
+    </>
+  )
+}
+
+export default function SearchPage() {
+  return (
+    <div className="flex min-h-screen flex-col bg-white">
+      <StoreHeader />
+      <main className="flex-1">
+        <div className="container px-4 py-12">
+          {/* Search Header */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 mb-6 px-5 py-2.5 bg-black text-white rounded-full shadow-sm">
+              <span className="text-sm font-bold uppercase tracking-wider">Search</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 text-gray-900">
+              Search Products
+            </h1>
+          </div>
+          <Suspense fallback={
+            <div className="mb-8">
+              <div className="relative mb-4">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search for handbags, brands, styles..."
+                  disabled
+                  className="pl-12 pr-24 h-14 text-lg"
+                />
+              </div>
+              <div className="flex gap-2 mt-4">
+                <Button size="lg" className="flex-1" disabled>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Loading...
+                </Button>
+              </div>
+            </div>
+          }>
+            <SearchContent />
+          </Suspense>
         </div>
       </main>
       <StoreFooter />
