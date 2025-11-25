@@ -62,15 +62,15 @@ export function FeaturedCategories({ categories }: FeaturedCategoriesProps) {
   }
 
   return (
-    <section className="container px-4 py-16 bg-white">
-      <div className="mb-12">
-        <div className="inline-block mb-3 px-3 py-1 bg-black text-white text-xs font-medium tracking-wider uppercase rounded-full">
-          <span>Categories</span>
+    <section className="container px-4 sm:px-6 lg:px-8 py-12 md:py-16 lg:py-20 bg-white">
+      <div className="mb-8 md:mb-12 lg:mb-16 text-center max-w-3xl mx-auto">
+        <div className="inline-flex items-center gap-2 mb-4 md:mb-6 px-4 py-2 bg-black text-white text-xs font-bold tracking-wider uppercase rounded-full">
+          <span>Collections in Focus</span>
         </div>
-        <h2 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-gray-900 leading-tight">
           Shop by Category
         </h2>
-        <p className="text-base text-gray-600 max-w-2xl">
+        <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
           Discover our curated collection organized by style and purpose
         </p>
       </div>
@@ -98,10 +98,51 @@ export function FeaturedCategories({ categories }: FeaturedCategoriesProps) {
           </Button>
         )}
 
-        {/* Horizontal Scroll Container */}
+        {/* Responsive Grid for Desktop, Horizontal Scroll for Mobile */}
+        <div className="hidden lg:grid grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6 xl:gap-8">
+          {displayCategories.slice(0, 8).map((category, index) => (
+            <Link key={category.id || index} href={`/categories/${category.slug || category.id}`}>
+              <Card className="group overflow-hidden cursor-pointer border border-gray-200 hover:border-black transition-all duration-300 bg-white h-full hover:shadow-xl">
+                <div className="relative h-64 md:h-72 lg:h-80 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+                  {category.banner_image ? (
+                    <Image
+                      src={category.banner_image}
+                      alt={category.name}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className="text-7xl md:text-8xl font-bold text-gray-200 group-hover:text-gray-300 transition-colors">
+                        {category.name.charAt(0)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+                <div className="p-5 md:p-6 text-center">
+                  <h3 className="text-lg md:text-xl font-bold mb-2 text-gray-900 group-hover:text-black transition-colors">
+                    {category.name.toUpperCase()}
+                  </h3>
+                  {category.description && (
+                    <p className="text-sm text-gray-600 line-clamp-2 mb-4 leading-relaxed">
+                      {category.description}
+                    </p>
+                  )}
+                  <div className="inline-flex items-center gap-2 text-sm font-semibold text-black group-hover:gap-3 transition-all">
+                    <span>Shop Now</span>
+                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </Card>
+            </Link>
+          ))}
+        </div>
+
+        {/* Horizontal Scroll Container for Mobile/Tablet */}
         <div
           ref={scrollRef}
-          className="flex gap-6 overflow-x-auto scrollbar-hide pb-4 scroll-smooth"
+          className="flex lg:hidden gap-4 md:gap-5 overflow-x-auto scrollbar-hide pb-4 scroll-smooth -mx-4 px-4"
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
@@ -110,37 +151,37 @@ export function FeaturedCategories({ categories }: FeaturedCategoriesProps) {
           {displayCategories.map((category, index) => (
             <div
               key={category.id || index}
-              className="shrink-0 w-[320px] md:w-[380px]"
+              className="shrink-0 w-[280px] sm:w-[320px]"
             >
               <Link href={`/categories/${category.slug || category.id}`}>
                 <Card className="group overflow-hidden cursor-pointer border border-gray-200 hover:border-black transition-all duration-300 bg-white h-full">
-                  <div className="relative h-80 overflow-hidden">
+                  <div className="relative h-64 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
                     {category.banner_image ? (
                       <Image
                         src={category.banner_image}
                         alt={category.name}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="object-cover group-hover:scale-110 transition-transform duration-700"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                        <span className="text-6xl font-bold text-gray-300">
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="text-6xl font-bold text-gray-200">
                           {category.name.charAt(0)}
                         </span>
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
-                  <div className="p-6 text-center">
-                    <h3 className="text-xl font-bold mb-2 text-gray-900 wrap-break-word">
-                      {category.name}
+                  <div className="p-5 text-center">
+                    <h3 className="text-lg font-bold mb-2 text-gray-900">
+                      {category.name.toUpperCase()}
                     </h3>
                     {category.description && (
-                      <p className="text-sm text-gray-600 line-clamp-2 mb-4 wrap-break-word">
+                      <p className="text-sm text-gray-600 line-clamp-2 mb-4">
                         {category.description}
                       </p>
                     )}
-                    <div className="inline-flex items-center gap-2 text-sm font-medium text-black group-hover:gap-3 transition-all">
+                    <div className="inline-flex items-center gap-2 text-sm font-semibold text-black group-hover:gap-3 transition-all">
                       <span>Shop Now</span>
                       <ArrowRight className="h-4 w-4" />
                     </div>
