@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ShoppingBag, Search, User, Heart, Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,11 +14,15 @@ export function StoreHeader() {
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white">
       <div className="container flex h-16 items-center justify-between px-4 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2 group">
-          <ShoppingBag className="h-6 w-6 text-black" />
-          <span className="text-xl font-bold text-black">
-            KIBANA
-          </span>
+        <Link href="/" className="flex items-center group">
+          <Image
+            src="/logo.jpg"
+            alt="KIBANA Logo"
+            width={120}
+            height={40}
+            className="h-8 md:h-10 w-auto object-contain"
+            priority
+          />
         </Link>
 
         {/* Search Bar */}
