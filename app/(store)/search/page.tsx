@@ -243,8 +243,6 @@ function SearchContent() {
                 brands={brands}
                 colors={colors}
                 materials={materials}
-                minPrice={0}
-                maxPrice={100000}
               />
             </CardContent>
           </Card>
