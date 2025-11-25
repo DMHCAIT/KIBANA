@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
 import { ArrowRight } from 'lucide-react'
 import { Metadata } from 'next'
+import { Category } from '@/types'
 
 export const metadata: Metadata = {
   title: 'Categories | KIBANA - Luxury Handbags',
@@ -33,7 +34,7 @@ export default async function CategoriesPage() {
     { id: '8', name: 'Bucket Bags', slug: 'bucket-bags', description: 'Trendy and spacious options', banner_image: null },
   ]
 
-  const displayCategories = (categories && categories.length > 0) ? categories : defaultCategories
+  const displayCategories: (Category | { id: string; name: string; slug: string; description: string | null; banner_image: string | null })[] = (categories && categories.length > 0) ? categories : defaultCategories
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
@@ -59,7 +60,7 @@ export default async function CategoriesPage() {
           {/* Centered Categories Grid */}
           <div className="flex justify-center">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 max-w-7xl">
-              {displayCategories.map((category) => (
+              {displayCategories.map((category: Category | { id: string; name: string; slug: string; description: string | null; banner_image: string | null }) => (
                 <Link key={category.id} href={`/categories/${category.slug || category.id}`}>
                   <Card className="group overflow-hidden cursor-pointer border-0 shadow-lg hover:shadow-2xl transition-all duration-500 h-full bg-gradient-to-br from-white via-gray-50/30 to-white rounded-[2rem]">
                     {/* Image Section */}
