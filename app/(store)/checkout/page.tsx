@@ -95,7 +95,7 @@ export default function CheckoutPage() {
 
     if (addresses && addresses.length > 0) {
       setSavedAddresses(addresses)
-      const defaultAddress = addresses.find(a => a.is_default) || addresses[0]
+      const defaultAddress = addresses.find((a: Address) => a.is_default) || addresses[0]
       setSelectedShippingAddress(defaultAddress)
       setSelectedBillingAddress(defaultAddress)
     } else {
