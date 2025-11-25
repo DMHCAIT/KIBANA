@@ -171,7 +171,7 @@ export function EditorialScrollStory({ product, scenes }: EditorialScrollStoryPr
           {defaultScenes.map((scene, index) => (
             <div
               key={index}
-              ref={(el) => (textRefs.current[index] = el)}
+              ref={(el) => { textRefs.current[index] = el }}
               className="absolute inset-0 flex items-center justify-center pointer-events-none"
               style={{ opacity: index === currentScene ? 1 : 0 }}
             >
