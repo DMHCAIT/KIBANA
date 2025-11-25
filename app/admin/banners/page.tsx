@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { BannersList } from '@/components/admin/BannersList'
 import { Metadata } from 'next'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Banners Management | KIBANA Admin',
   description: 'Manage homepage and promotional banners',

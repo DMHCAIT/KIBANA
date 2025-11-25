@@ -8,6 +8,8 @@ import { TopProducts } from '@/components/admin/TopProducts'
 import { RecentActivity } from '@/components/admin/RecentActivity'
 import { Metadata } from 'next'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Admin Dashboard | KIBANA',
   description: 'KIBANA admin dashboard - Manage products, orders, and store settings',

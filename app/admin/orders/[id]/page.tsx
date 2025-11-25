@@ -4,6 +4,8 @@ import { OrderDetail } from '@/components/admin/OrderDetail'
 import { Metadata } from 'next'
 import { ShoppingBag, FileText } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }: OrderDetailPageProps): Promise<Metadata> {
   return {
     title: 'Order Details | KIBANA Admin',

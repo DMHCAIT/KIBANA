@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import { Tag, Edit } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }: EditCategoryPageProps): Promise<Metadata> {
   return {
     title: 'Edit Category | KIBANA Admin',

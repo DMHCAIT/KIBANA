@@ -7,6 +7,8 @@ import { Database } from '@/types/database'
 
 type User = Database['public']['Tables']['users']['Row']
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Users Management | KIBANA Admin',
   description: 'Manage customer accounts and user roles',

@@ -3,6 +3,8 @@ import { CategoryForm } from '@/components/admin/CategoryForm'
 import { Metadata } from 'next'
 import { Tag, Plus } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Add New Category | KIBANA Admin',
   description: 'Create a new product category',

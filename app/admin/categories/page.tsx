@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { CategoriesList } from '@/components/admin/CategoriesList'
 import { Metadata } from 'next'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Categories Management | KIBANA Admin',
   description: 'Organize your products into categories',

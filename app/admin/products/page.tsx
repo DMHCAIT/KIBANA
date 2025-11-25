@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { ProductsTable } from '@/components/admin/ProductsTable'
 import { Metadata } from 'next'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Products Management | KIBANA Admin',
   description: 'Manage your product catalog - Add, edit, and organize products',

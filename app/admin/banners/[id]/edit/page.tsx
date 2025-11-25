@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import { Image, Edit } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }: EditBannerPageProps): Promise<Metadata> {
   return {
     title: 'Edit Banner | KIBANA Admin',

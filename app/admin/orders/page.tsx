@@ -4,6 +4,8 @@ import { OrdersTable } from '@/components/admin/OrdersTable'
 import { ShoppingBag } from 'lucide-react'
 import { Metadata } from 'next'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Orders Management | KIBANA Admin',
   description: 'Manage customer orders and track order status',

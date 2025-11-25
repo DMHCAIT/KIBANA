@@ -2,6 +2,8 @@ import { BannerForm } from '@/components/admin/BannerForm'
 import { Metadata } from 'next'
 import { Image, Plus } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Add New Banner | KIBANA Admin',
   description: 'Create a new promotional banner',

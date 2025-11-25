@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation'
 import { Metadata } from 'next'
 import { Package, Plus } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Add New Product | KIBANA Admin',
   description: 'Create a new product in your catalog',
