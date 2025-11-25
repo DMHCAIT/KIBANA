@@ -313,7 +313,6 @@ function SearchContent() {
           </p>
         </div>
       )}
-      </div>
     </>
   )
 }
