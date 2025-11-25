@@ -2,8 +2,6 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 export async function createClient() {
-  const cookieStore = await cookies()
-
   // Check if Supabase environment variables are configured
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -46,6 +44,30 @@ export async function createClient() {
           upload: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
           getPublicUrl: () => ({ data: { publicUrl: '' } }),
         }),
+      },
+    } as any
+  }
+
+  let cookieStore
+  try {
+    cookieStore = await cookies()
+  } catch (error) {
+    console.warn('Failed to get cookies:', error)
+    // Return mock client if cookies fail
+    return {
+      from: () => ({
+        select: () => Promise.resolve({ data: [], error: null, count: 0 }),
+        insert: () => Promise.resolve({ data: null, error: { message: 'Cookies not available' } }),
+        update: () => Promise.resolve({ data: null, error: { message: 'Cookies not available' } }),
+        delete: () => Promise.resolve({ data: null, error: { message: 'Cookies not available' } }),
+        eq: () => Promise.resolve({ data: [], error: null, count: 0 }),
+        order: () => Promise.resolve({ data: [], error: null, count: 0 }),
+        limit: () => Promise.resolve({ data: [], error: null, count: 0 }),
+        range: () => Promise.resolve({ data: [], error: null, count: 0 }),
+        single: () => Promise.resolve({ data: null, error: { message: 'Cookies not available' } }),
+      }),
+      auth: {
+        getUser: () => Promise.resolve({ data: { user: null }, error: null }),
       },
     } as any
   }
