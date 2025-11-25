@@ -21,7 +21,7 @@ import { toast } from 'sonner'
 import { StoreHeader } from '@/components/store/StoreHeader'
 import { StoreFooter } from '@/components/store/StoreFooter'
 
-interface Address {
+export interface Address {
   id?: string
   name: string
   phone: string

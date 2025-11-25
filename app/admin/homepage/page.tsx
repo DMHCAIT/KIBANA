@@ -29,7 +29,7 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
-interface HomepageSection {
+export interface HomepageSection {
   id: string
   type: 'hero' | 'categories' | 'products' | 'banner' | 'testimonials' | 'newsletter'
   order: number

@@ -22,7 +22,7 @@ export function TopProducts() {
       .from('order_items')
       .select('product_id, quantity')
 
-    const productCounts = (orderItems || []).reduce((acc: any, item) => {
+    const productCounts = (orderItems || []).reduce((acc: any, item: any) => {
       acc[item.product_id] = (acc[item.product_id] || 0) + item.quantity
       return acc
     }, {})
@@ -46,7 +46,7 @@ export function TopProducts() {
       .in('id', topProductIds)
 
     // Sort by count
-    const sorted = (data || []).sort((a, b) => {
+    const sorted = (data || []).sort((a: any, b: any) => {
       const countA = productCounts[a.id] || 0
       const countB = productCounts[b.id] || 0
       return countB - countA
