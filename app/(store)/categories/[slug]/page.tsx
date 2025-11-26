@@ -95,8 +95,36 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
       query = query.order('created_at', { ascending: false })
   }
 
-  const { data: products, count } = await query
-    .range(offset, offset + limit - 1)
+  const { data: productsRaw } = await query
+
+  // Transform products to show each color variant as a separate item
+  const productsExpanded: any[] = []
+  if (productsRaw) {
+    for (const product of productsRaw) {
+      const colorVariants = product.variants?.filter((v: any) => v.color && v.is_active) || []
+      
+      if (colorVariants.length > 0) {
+        // Create a card for each color variant
+        for (const variant of colorVariants) {
+          // Find the image for this specific variant
+          const variantImage = product.images?.find((img: any) => img.variant_id === variant.id)
+          productsExpanded.push({
+            ...product,
+            _displayVariant: variant,
+            _displayVariantImage: variantImage,
+            _isVariantCard: true,
+          })
+        }
+      } else {
+        // No color variants, show the product as is
+        productsExpanded.push(product)
+      }
+    }
+  }
+
+  // Paginate the expanded products
+  const products = productsExpanded.slice(offset, offset + limit)
+  const count = productsExpanded.length
 
   return (
     <div className="flex min-h-screen flex-col bg-white">

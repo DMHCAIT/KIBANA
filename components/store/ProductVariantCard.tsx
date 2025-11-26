@@ -1,6 +1,6 @@
 'use client'
 
-import { Product } from '@/types'
+import { Product, ProductVariant, ProductImage } from '@/types'
 import { Card, CardContent } from '@/components/ui/card'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -12,19 +12,24 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
-interface ProductCardProps {
+interface ProductVariantCardProps {
   product: Product
+  variant?: ProductVariant | null
+  variantImage?: ProductImage | null
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductVariantCard({ product, variant, variantImage }: ProductVariantCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [addingToCart, setAddingToCart] = useState(false)
   const supabase = createClient()
   const router = useRouter()
   
-  const primaryImage = product.images?.find(img => img.is_primary) || product.images?.[0]
-  const price = product.sale_price || product.price
+  // Get the image for this specific variant or fallback to primary image
+  const displayImage = variantImage || product.images?.find(img => img.is_primary) || product.images?.[0]
+  
+  // Use variant price if available, otherwise product price
+  const price = variant?.price || product.sale_price || product.price
   const originalPrice = product.sale_price ? product.price : null
   const discount = product.sale_price 
     ? Math.round(((product.price - product.sale_price) / product.price) * 100)
@@ -32,6 +37,16 @@ export function ProductCard({ product }: ProductCardProps) {
   
   // Generate slug if missing
   const productSlug = product.slug || product.id || `product-${product.name?.toLowerCase().replace(/\s+/g, '-') || 'unknown'}`
+
+  // Variant display name
+  const variantName = variant?.color 
+    ? `${product.name} - ${variant.color}`
+    : product.name
+
+  // Stock status
+  const isInStock = variant 
+    ? variant.stock_quantity > 0 && variant.is_active
+    : product.stock_status === 'in_stock'
 
   // Check if product is wishlisted
   useEffect(() => {
@@ -114,12 +129,15 @@ export function ProductCard({ product }: ProductCardProps) {
     e.preventDefault()
     e.stopPropagation()
     
+    if (!isInStock) {
+      toast.error('This item is out of stock')
+      return
+    }
+
     setAddingToCart(true)
     const { data: { user } } = await supabase.auth.getUser()
     
     try {
-      const selectedVariant = product.variants?.[0] || null
-      
       // For logged-in users, use database
       if (user) {
         const { error } = await supabase
@@ -127,20 +145,20 @@ export function ProductCard({ product }: ProductCardProps) {
           .upsert({
             user_id: user.id,
             product_id: product.id,
-            variant_id: selectedVariant?.id || null,
+            variant_id: variant?.id || null,
             quantity: 1,
           }, {
             onConflict: 'user_id,product_id,variant_id'
           })
 
         if (error) throw error
-        toast.success('Added to cart')
+        toast.success(`Added ${variant?.color || 'item'} to cart`)
         router.refresh()
       } else {
         // For guest users, use localStorage
         const cart = JSON.parse(localStorage.getItem('guestCart') || '[]')
         const existingItemIndex = cart.findIndex((item: any) => 
-          item.product_id === product.id && item.variant_id === selectedVariant?.id
+          item.product_id === product.id && item.variant_id === variant?.id
         )
         
         if (existingItemIndex >= 0) {
@@ -148,14 +166,15 @@ export function ProductCard({ product }: ProductCardProps) {
         } else {
           cart.push({
             product_id: product.id,
-            variant_id: selectedVariant?.id || null,
+            variant_id: variant?.id || null,
             quantity: 1,
-            product: product // Store product data for guest cart display
+            product: product, // Store product data for guest cart display
+            variant: variant // Store variant data
           })
         }
         
         localStorage.setItem('guestCart', JSON.stringify(cart))
-        toast.success('Added to cart')
+        toast.success(`Added ${variant?.color || 'item'} to cart`)
       }
     } catch (error: any) {
       console.error('Error adding to cart:', error)
@@ -167,16 +186,16 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Card 
-      className="group overflow-hidden border border-gray-200 hover:border-black transition-all duration-300 bg-white"
+      className="group overflow-hidden border border-gray-200 hover:border-black hover:shadow-xl transition-all duration-300 bg-white"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <Link href={`/products/${productSlug}`}>
         <div className="relative aspect-square overflow-hidden bg-gray-50">
-          {primaryImage ? (
+          {displayImage ? (
             <Image
-              src={primaryImage.image_url}
-              alt={primaryImage.alt_text || product.name}
+              src={displayImage.image_url}
+              alt={displayImage.alt_text || variantName}
               fill
               className={`object-cover transition-all duration-700 ${
                 isHovered ? 'scale-110 brightness-105' : 'scale-100'
@@ -194,14 +213,24 @@ export function ProductCard({ product }: ProductCardProps) {
           
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
-            {product.sale_price && (
+            {!isInStock && (
+              <Badge className="bg-gray-600 text-white border-0 px-2 py-1 text-xs">
+                Out of Stock
+              </Badge>
+            )}
+            {isInStock && product.sale_price && (
               <Badge className="bg-red-600 text-white border-0 px-2 py-1 text-xs">
                 -{discount}%
               </Badge>
             )}
-            {product.is_featured && (
+            {isInStock && product.is_featured && !product.sale_price && (
               <Badge className="bg-black text-white border-0 px-2 py-1 text-xs">
                 Featured
+              </Badge>
+            )}
+            {variant?.stock_quantity && variant.stock_quantity <= 5 && variant.stock_quantity > 0 && (
+              <Badge className="bg-orange-600 text-white border-0 px-2 py-1 text-xs">
+                Only {variant.stock_quantity} left
               </Badge>
             )}
           </div>
@@ -236,18 +265,20 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
 
           {/* Quick Add Button Overlay */}
-          <div className={`absolute bottom-0 left-0 right-0 bg-black/90 p-3 transition-all duration-300 ${
-            isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-          }`}>
-            <Button
-              className="w-full bg-white text-black hover:bg-gray-100 font-medium"
-              onClick={handleAddToCart}
-              disabled={addingToCart}
-            >
-              <ShoppingBag className="mr-2 h-4 w-4" />
-              {addingToCart ? 'Adding...' : 'Quick Add'}
-            </Button>
-          </div>
+          {isInStock && (
+            <div className={`absolute bottom-0 left-0 right-0 bg-black/90 p-3 transition-all duration-300 ${
+              isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}>
+              <Button
+                className="w-full bg-white text-black hover:bg-gray-100 font-medium"
+                onClick={handleAddToCart}
+                disabled={addingToCart}
+              >
+                <ShoppingBag className="mr-2 h-4 w-4" />
+                {addingToCart ? 'Adding...' : 'Quick Add'}
+              </Button>
+            </div>
+          )}
         </div>
       </Link>
       
@@ -257,13 +288,18 @@ export function ProductCard({ product }: ProductCardProps) {
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
               {product.brand || 'KIBANA'}
             </p>
-            <h3 className="font-semibold text-base mb-2 line-clamp-2 hover:text-gray-600 transition-colors text-gray-900">
+            <h3 className="font-semibold text-base mb-1 line-clamp-2 hover:text-gray-600 transition-colors text-gray-900">
               {product.name}
             </h3>
+            {variant?.color && (
+              <p className="text-sm text-gray-600">
+                Color: <span className="font-medium">{variant.color}</span>
+              </p>
+            )}
           </div>
 
           {/* Price */}
-          <div className="flex items-baseline gap-2 mb-4">
+          <div className="flex items-baseline gap-2 mb-3">
             <span className="text-xl font-bold text-gray-900">
               ₹{price.toLocaleString()}
             </span>
@@ -273,19 +309,34 @@ export function ProductCard({ product }: ProductCardProps) {
               </span>
             )}
           </div>
+
+          {/* Stock info */}
+          {variant && variant.stock_quantity > 0 && (
+            <p className="text-xs text-gray-500 mb-3">
+              {variant.stock_quantity} in stock
+            </p>
+          )}
         </Link>
 
         {/* Add to Cart Button */}
-        <Button
-          className="w-full bg-black hover:bg-gray-900 text-white transition-all duration-300 font-medium"
-          onClick={handleAddToCart}
-          disabled={addingToCart}
-        >
-          <ShoppingBag className="mr-2 h-4 w-4" />
-          {addingToCart ? 'Adding...' : 'Add to Cart'}
-        </Button>
+        {isInStock ? (
+          <Button
+            className="w-full bg-black hover:bg-gray-900 text-white transition-all duration-300 font-medium"
+            onClick={handleAddToCart}
+            disabled={addingToCart}
+          >
+            <ShoppingBag className="mr-2 h-4 w-4" />
+            {addingToCart ? 'Adding...' : 'Add to Cart'}
+          </Button>
+        ) : (
+          <Button
+            className="w-full bg-gray-400 text-white cursor-not-allowed"
+            disabled
+          >
+            Out of Stock
+          </Button>
+        )}
       </CardContent>
     </Card>
   )
 }
-

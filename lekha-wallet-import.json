@@ -1,0 +1,87 @@
+{
+  "products": [
+    {
+      "name": "Lekha Wallet",
+      "slug": "lekha-wallet",
+      "brand": "KIBANA",
+      "description": "Lekha Wallet – Write Your Style.\n\nInspired by the lines of an envelope, Lekha (meaning 'writing/record' in Sanskrit & Hindi) is a blend of heritage and trend. With its chic geometric cuts, soft leather touch, and vibrant color story, Lekha adds a bold pop to your everyday carry.\n\nCompact yet spacious, it's designed to hold more than just essentials — it holds your statement.\n\nKEY FEATURES:\n• Envelope-inspired geometric design\n• Chic geometric cuts with elegant lines\n• Premium 100% PU Leather with smooth, fine-grained texture\n• Zip-around closure with envelope-style panel design\n• 2 main cash compartments\n• 1 center zipper pocket for coins\n• 6–8 card slots for organization\n• 2 slip pockets for bills/receipts\n• Gold-tone hardware (zipper puller & trims)\n• Adjustable shoulder strap (26 cm drop) - can be used as clutch or crossbody\n• Compact yet spacious design\n• 1.5-2 liter capacity\n• Perfect for everyday use and evening outings\n\nWHAT FITS INSIDE:\n✓ Cash in 2 main compartments\n✓ Coins in center zipper pocket\n✓ 6-8 cards organized\n✓ Bills and receipts\n✓ Small essentials\n✓ Phone (in external pocket when carried as clutch)\n\nDESIGN STORY:\nLekha (meaning 'writing' or 'record' in Sanskrit/Hindi) represents documentation and personal expression. This wallet is part of the Indian-rooted 'Message & Writing' collection, beautifully paired with Sandesh Laptop Bag.\n\n**Perfect Pairing:** Sandesh (Message) + Lekha (Writing) = Complete professional style with cultural roots.\n\nWhether you're heading to work, meeting friends, or enjoying an evening out, Lekha adds a bold pop of color and heritage-inspired elegance to your look.",
+      "short_description": "Write Your Style. Envelope-inspired wallet with geometric design, 6-8 card slots, coin pocket, and gold accents. Compact yet spacious. A statement of elegance.",
+      "price": 2199,
+      "category": "Wallet",
+      "is_featured": true,
+      "stock_status": "in_stock",
+      "seo_title": "Lekha Wallet - Envelope Design Women's Wallet with Gold Accents | KIBANA",
+      "seo_description": "Shop Lekha Wallet featuring envelope-inspired geometric design, 6-8 card slots, coin pocket, and premium PU leather. Available in 4 colors. Perfect for everyday use and evening outings.",
+      "specifications": {
+        "material": "100% PU Leather",
+        "texture": "Smooth, Fine-Grained",
+        "hardware": "Gold-Tone Accents (zipper puller & trims)",
+        "closure": "Zip-Around Closure with envelope-style panel design",
+        "compartments": "2 main cash compartments, 1 center zipper pocket for coins, 6–8 card slots, 2 slip pockets for bills/receipts",
+        "shoulderDrop": "26 cm (adjustable strap included)",
+        "capacity": "1.5–2 Liters - designed to hold cash, coins, cards, and small essentials",
+        "idealFor": "Everyday use, evening outings, and as a stylish companion for both casual and professional looks",
+        "features": [
+          "Envelope-inspired design",
+          "Chic geometric cuts",
+          "Elegant lines and panels",
+          "Heritage meets trend",
+          "100% PU Leather",
+          "Smooth fine-grained texture",
+          "Soft leather touch",
+          "Zip-around closure",
+          "Envelope-style panel design",
+          "2 main cash compartments",
+          "Center zipper pocket for coins",
+          "6-8 card slots",
+          "2 slip pockets for bills/receipts",
+          "Gold-tone hardware",
+          "Adjustable shoulder strap (26 cm)",
+          "Use as clutch or crossbody",
+          "Compact yet spacious",
+          "Bold color pop",
+          "Part of Message & Writing collection",
+          "Pairs beautifully with SANDESH LAPTOP BAG"
+        ]
+      },
+      "variants": [
+        {
+          "color": "Teal Blue",
+          "sku": "LEKHA-TEAL-001",
+          "price": 2199,
+          "stock_quantity": 25,
+          "is_active": true,
+          "image_filename": "lekha-wallet-teal-blue.png",
+          "alt_text": "Lekha Wallet in Teal Blue - Envelope design clutch wallet"
+        },
+        {
+          "color": "Mint Green",
+          "sku": "LEKHA-GREEN-001",
+          "price": 2199,
+          "stock_quantity": 25,
+          "is_active": true,
+          "image_filename": "lekha-wallet-pastel-green.png",
+          "alt_text": "Lekha Wallet in Mint Green - Pastel green elegant wallet"
+        },
+        {
+          "color": "Mocha Tan",
+          "sku": "LEKHA-TAN-001",
+          "price": 2199,
+          "stock_quantity": 25,
+          "is_active": true,
+          "image_filename": "lekha-wallet-brown.png",
+          "alt_text": "Lekha Wallet in Mocha Tan - Brown stylish wallet"
+        },
+        {
+          "color": "Milky Blue",
+          "sku": "LEKHA-BLUE-001",
+          "price": 2199,
+          "stock_quantity": 25,
+          "is_active": true,
+          "image_filename": "lekha-wallet-milky-blue.png",
+          "alt_text": "Lekha Wallet in Milky Blue - Light blue chic wallet"
+        }
+      ]
+    }
+  ]
+}

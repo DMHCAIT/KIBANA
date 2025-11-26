@@ -1,0 +1,91 @@
+{
+  "products": [
+    {
+      "name": "SANDESH LAPTOP BAG",
+      "slug": "sandesh-laptop-bag",
+      "brand": "KIBANA",
+      "description": "Sandesh Laptop Bag – Carry Your Story. Own Your Style.\n\nInspired by the timeless shape of an envelope, Sandesh blends tradition with trend. Its sharp geometric front and sleek silhouette make it a bold fashion statement, while the smartly designed laptop compartment keeps you ready for work, play, and everything in between.\n\nFrom café catch-ups to boardroom meetings, Sandesh is more than a bag — it's your message to the world.\n\nKEY FEATURES:\n• Envelope-inspired design with sharp geometric front\n• Sleek, structured silhouette\n• Premium 100% PU Leather with smooth, fine-grained texture\n• Magnetic flap with concealed zipper for secure storage\n• Main padded compartment (fits 14\"–15.6\" laptop)\n• Front envelope-style pocket for documents/tablet\n• Internal zipper pocket + slip pockets for phone & cards\n• Gold-tone hardware accents\n• Detachable long strap (adjustable 50–60 cm)\n• Top handle (8–10 cm drop)\n• 12-14 liter capacity\n• Height: 28 cm\n• Perfect for professionals, students, and style-conscious users\n\nWHAT FITS INSIDE:\n✓ Laptop (14\"–15.6\")\n✓ Tablet or documents in front pocket\n✓ Diary and notebooks\n✓ Charger and cables\n✓ Wallet\n✓ Phone\n✓ Daily essentials\n\nDESIGN STORY:\nSandesh (meaning 'message' in Sanskrit/Hindi) represents communication and connection. This laptop bag is your message to the world — a statement of professionalism, style, and cultural heritage. The envelope-inspired design pays homage to traditional correspondence while embracing modern functionality.",
+      "short_description": "Carry Your Story. Own Your Style. Envelope-inspired laptop bag with geometric design, padded compartment for 14\"–15.6\" laptop, and premium gold accents. A bold statement piece.",
+      "price": 6499,
+      "category": "Laptop Bag",
+      "is_featured": true,
+      "stock_status": "in_stock",
+      "seo_title": "SANDESH LAPTOP BAG - Envelope Design Laptop Bag with Gold Accents | KIBANA",
+      "seo_description": "Shop SANDESH LAPTOP BAG featuring envelope-inspired geometric design, padded 14-15.6 inch laptop compartment, and premium PU leather. Available in 4 colors. Perfect for professionals and students.",
+      "specifications": {
+        "dimensions": {
+          "height": "28 cm",
+          "capacity": "12-14 Liters"
+        },
+        "material": "100% PU Leather",
+        "texture": "Smooth, Fine-Grained",
+        "hardware": "Gold-Tone Accents",
+        "closure": "Magnetic Flap with concealed zipper for secure storage",
+        "compartments": "One main padded compartment (fits 14–15.6 inch laptop), One front envelope-style pocket for documents/tablet, Internal zipper pocket + slip pockets for phone & cards",
+        "shoulderDrop": "Detachable long strap (adjustable 50–60 cm) + top handle (8–10 cm drop)",
+        "capacity": "12–14 Liters – fits laptop, diary, charger, wallet, phone, and daily essentials",
+        "laptopSize": "Fits 14\"–15.6\" laptop",
+        "idealFor": "Professionals, students, and style-conscious users who want a luxury laptop bag with a bold geometric identity",
+        "features": [
+          "Envelope-inspired timeless design",
+          "Sharp geometric front panel",
+          "Sleek structured silhouette",
+          "Bold fashion statement",
+          "100% PU Leather",
+          "Smooth fine-grained texture",
+          "Magnetic flap closure",
+          "Concealed zipper for security",
+          "Padded laptop compartment (14-15.6 inches)",
+          "Front envelope-style pocket",
+          "Internal zipper pocket",
+          "Slip pockets for phone and cards",
+          "Gold-tone hardware accents",
+          "Detachable adjustable strap (50-60 cm)",
+          "Top handle (8-10 cm drop)",
+          "12-14 liter capacity",
+          "Height: 28 cm",
+          "Perfect for work, café, boardroom",
+          "Cultural heritage meets modern style"
+        ]
+      },
+      "variants": [
+        {
+          "color": "Teal Blue",
+          "sku": "SANDESH-TEAL-001",
+          "price": 6499,
+          "stock_quantity": 15,
+          "is_active": true,
+          "image_filename": "sandesh-laptop-bag-teal-blue.png",
+          "alt_text": "SANDESH LAPTOP BAG in Teal Blue - Envelope design laptop bag"
+        },
+        {
+          "color": "Mint Green",
+          "sku": "SANDESH-GREEN-001",
+          "price": 6499,
+          "stock_quantity": 15,
+          "is_active": true,
+          "image_filename": "sandesh-laptop-bag-green.png",
+          "alt_text": "SANDESH LAPTOP BAG in Mint Green - Pastel green laptop bag"
+        },
+        {
+          "color": "Mocha Tan",
+          "sku": "SANDESH-TAN-001",
+          "price": 6499,
+          "stock_quantity": 15,
+          "is_active": true,
+          "image_filename": "sandesh-laptop-bag-brown.png",
+          "alt_text": "SANDESH LAPTOP BAG in Mocha Tan - Brown professional laptop bag"
+        },
+        {
+          "color": "Milky Blue",
+          "sku": "SANDESH-BLUE-001",
+          "price": 6499,
+          "stock_quantity": 15,
+          "is_active": true,
+          "image_filename": "sandesh-laptop-bag-milky-blue.png",
+          "alt_text": "SANDESH LAPTOP BAG in Milky Blue - Light blue elegant laptop bag"
+        }
+      ]
+    }
+  ]
+}

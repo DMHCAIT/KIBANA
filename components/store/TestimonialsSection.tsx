@@ -77,7 +77,7 @@ export function TestimonialsSection() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="w-full bg-white section-luxury border-t border-gray-100">
+    <section ref={sectionRef} className="w-full bg-white section-luxury border-t border-gray-100 relative z-10">
       <div className="container px-4 sm:px-6 lg:px-8 mx-auto py-16 md:py-20 lg:py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -97,36 +97,38 @@ export function TestimonialsSection() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 max-w-7xl mx-auto">
+        {/* Mobile: 2 columns, Tablet: 2 columns, Desktop: 4 columns */}
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 max-w-7xl mx-auto">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.id}
               data-testimonial-card
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
+              className="h-full"
             >
               <Card className="h-full hover:shadow-lg transition-shadow duration-300 border border-gray-200 hover:border-black">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-1 mb-4">
+                <CardContent className="p-4 md:p-6">
+                  <div className="flex items-center gap-1 mb-3 md:mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <Star key={i} className="h-3 w-3 md:h-4 md:w-4 fill-yellow-400 text-yellow-400" />
                     ))}
                   </div>
-                  <Quote className="h-6 w-6 text-gray-300 mb-4" />
-                  <p className="text-gray-600 mb-6 leading-relaxed text-sm">
+                  <Quote className="h-5 w-5 md:h-6 md:w-6 text-gray-300 mb-3 md:mb-4" />
+                  <p className="text-gray-600 mb-4 md:mb-6 leading-relaxed text-xs md:text-sm">
                     &ldquo;{testimonial.text}&rdquo;
                   </p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
-                    <div className="w-10 h-10 bg-black text-white flex items-center justify-center font-semibold">
-                      <span className="text-sm">
+                  <div className="flex items-center gap-2 md:gap-3 pt-3 md:pt-4 border-t border-gray-200">
+                    <div className="w-8 h-8 md:w-10 md:h-10 bg-black text-white flex items-center justify-center font-semibold shrink-0">
+                      <span className="text-xs md:text-sm">
                         {testimonial.name.charAt(0)}
                       </span>
                     </div>
-                    <div>
-                      <p className="font-semibold text-gray-900 text-sm">{testimonial.name}</p>
-                      <p className="text-xs text-gray-600">{testimonial.role}</p>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-gray-900 text-xs md:text-sm truncate">{testimonial.name}</p>
+                      <p className="text-[10px] md:text-xs text-gray-600 truncate">{testimonial.role}</p>
                     </div>
                   </div>
                 </CardContent>

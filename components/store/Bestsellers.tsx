@@ -39,56 +39,23 @@ export function Bestsellers({ products }: BestsellersProps) {
         </div>
       ) : (
         <>
-          {/* Centered Grid for Desktop - 2x2 Grid */}
-          <div className="flex justify-center">
-            <div className="hidden lg:grid grid-cols-2 gap-8 xl:gap-12 max-w-4xl w-full">
-              {displayProducts.slice(0, 4).map((product) => (
-                <div key={product.id}>
-                  <ProductCard product={product} />
-                </div>
-              ))}
-            </div>
+          {/* Responsive Grid - 2 columns on mobile, 2x2 on desktop */}
+          <div className="grid grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8 max-w-5xl mx-auto">
+            {displayProducts.slice(0, 4).map((product) => (
+              <div key={product.id} className="w-full">
+                <ProductCard product={product} />
+              </div>
+            ))}
           </div>
 
-          {/* Horizontal Scroll for Mobile/Tablet */}
-          <div className="lg:hidden">
-            <div 
-              className="overflow-x-auto scrollbar-hide pb-4 -mx-4 px-4 scroll-smooth touch-pan-x"
-              style={{ 
-                WebkitOverflowScrolling: 'touch',
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none',
-              }}
-              onTouchStart={(e) => {
-                const container = e.currentTarget
-                const touch = e.touches[0]
-                const startX = touch.clientX
-                const startScrollLeft = container.scrollLeft
-                
-                const handleTouchMove = (e: TouchEvent) => {
-                  const touch = e.touches[0]
-                  const diffX = startX - touch.clientX
-                  container.scrollLeft = startScrollLeft + diffX
-                }
-                
-                const handleTouchEnd = () => {
-                  document.removeEventListener('touchmove', handleTouchMove)
-                  document.removeEventListener('touchend', handleTouchEnd)
-                }
-                
-                document.addEventListener('touchmove', handleTouchMove, { passive: false })
-                document.addEventListener('touchend', handleTouchEnd)
-              }}
-            >
-              <div className="flex gap-6 min-w-max">
-                {displayProducts.map((product) => (
-                  <div key={product.id} className="w-[280px] sm:w-[320px] shrink-0">
-                    <ProductCard product={product} />
-                  </div>
-                ))}
-              </div>
+          {/* View All Button */}
+          {displayProducts.length > 4 && (
+            <div className="mt-8 md:mt-12 text-center">
+              <Button asChild variant="outline" className="px-8 py-6 text-base">
+                <Link href="/products">View All Products</Link>
+              </Button>
             </div>
-          </div>
+          )}
         </>
       )}
       </div>
