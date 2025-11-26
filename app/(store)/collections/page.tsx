@@ -145,7 +145,7 @@ export default async function CollectionsPage() {
               </div>
             ) : (
               <div className="flex justify-center">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 xl:gap-12 max-w-7xl w-full">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8 xl:gap-12 max-w-6xl w-full">
                   {displayCategories.map((category: Category) => (
                     <Link key={category.id} href={`/collections/${category.slug || category.id}`}>
                       <Card className="group overflow-hidden cursor-pointer border-luxury border-gray-200 hover:border-gray-400 transition-all duration-300 bg-white h-full">

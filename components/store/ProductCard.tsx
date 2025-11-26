@@ -7,7 +7,10 @@ import Link from 'next/link'
 import { Heart, ShoppingBag, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 interface ProductCardProps {
   product: Product
@@ -16,6 +19,10 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [addingToCart, setAddingToCart] = useState(false)
+  const supabase = createClient()
+  const router = useRouter()
+  
   const primaryImage = product.images?.find(img => img.is_primary) || product.images?.[0]
   const price = product.sale_price || product.price
   const originalPrice = product.sale_price ? product.price : null
@@ -25,6 +32,103 @@ export function ProductCard({ product }: ProductCardProps) {
   
   // Generate slug if missing
   const productSlug = product.slug || product.id || `product-${product.name?.toLowerCase().replace(/\s+/g, '-') || 'unknown'}`
+
+  // Check if product is wishlisted
+  useEffect(() => {
+    const checkWishlist = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      const { data } = await supabase
+        .from('wishlist')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('product_id', product.id)
+        .single()
+
+      setIsWishlisted(!!data)
+    }
+    checkWishlist()
+  }, [product.id, supabase])
+
+  const handleWishlist = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+      router.push(`/login?redirect=/products/${productSlug}`)
+      return
+    }
+
+    if (isWishlisted) {
+      const { error } = await supabase
+        .from('wishlist')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('product_id', product.id)
+
+      if (!error) {
+        setIsWishlisted(false)
+        toast.success('Removed from wishlist')
+      } else {
+        toast.error('Failed to remove from wishlist')
+      }
+    } else {
+      const { error } = await supabase
+        .from('wishlist')
+        .insert({
+          user_id: user.id,
+          product_id: product.id,
+        })
+
+      if (!error) {
+        setIsWishlisted(true)
+        toast.success('Added to wishlist')
+      } else {
+        toast.error('Failed to add to wishlist')
+      }
+    }
+  }
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    setAddingToCart(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+      router.push(`/login?redirect=/products/${productSlug}`)
+      setAddingToCart(false)
+      return
+    }
+
+    try {
+      const selectedVariant = product.variants?.[0] || null
+      const { error } = await supabase
+        .from('cart')
+        .upsert({
+          user_id: user.id,
+          product_id: product.id,
+          variant_id: selectedVariant?.id || null,
+          quantity: 1,
+        }, {
+          onConflict: 'user_id,product_id,variant_id'
+        })
+
+      if (error) throw error
+
+      toast.success('Added to cart')
+      router.refresh()
+    } catch (error: any) {
+      console.error('Error adding to cart:', error)
+      toast.error(error.message || 'Failed to add to cart')
+    } finally {
+      setAddingToCart(false)
+    }
+  }
 
   return (
     <Card 
@@ -75,10 +179,7 @@ export function ProductCard({ product }: ProductCardProps) {
               variant="secondary"
               size="icon"
               className="h-10 w-10 bg-white hover:bg-gray-100 border border-gray-200 transition-all"
-              onClick={(e) => {
-                e.preventDefault()
-                setIsWishlisted(!isWishlisted)
-              }}
+              onClick={handleWishlist}
             >
               <Heart
                 className={`h-4 w-4 transition-all ${
@@ -105,13 +206,11 @@ export function ProductCard({ product }: ProductCardProps) {
           }`}>
             <Button
               className="w-full bg-white text-black hover:bg-gray-100 font-medium"
-              onClick={(e) => {
-                e.preventDefault()
-                // Add to cart logic
-              }}
+              onClick={handleAddToCart}
+              disabled={addingToCart}
             >
               <ShoppingBag className="mr-2 h-4 w-4" />
-              Quick Add
+              {addingToCart ? 'Adding...' : 'Quick Add'}
             </Button>
           </div>
         </div>
@@ -144,12 +243,11 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Add to Cart Button */}
         <Button
           className="w-full bg-black hover:bg-gray-900 text-white transition-all duration-300 font-medium"
-          onClick={() => {
-            // Add to cart logic
-          }}
+          onClick={handleAddToCart}
+          disabled={addingToCart}
         >
           <ShoppingBag className="mr-2 h-4 w-4" />
-          Add to Cart
+          {addingToCart ? 'Adding...' : 'Add to Cart'}
         </Button>
       </CardContent>
     </Card>

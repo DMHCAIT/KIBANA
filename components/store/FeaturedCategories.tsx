@@ -97,10 +97,10 @@ export function FeaturedCategories({ categories }: FeaturedCategoriesProps) {
           </Button>
         )}
 
-          {/* Centered Grid for Desktop */}
+          {/* Centered Grid for Desktop - 2x2 Grid */}
           <div className="flex justify-center">
-            <div className="hidden lg:grid grid-cols-2 xl:grid-cols-4 gap-8 xl:gap-12 max-w-7xl w-full">
-              {displayCategories.slice(0, 8).map((category, index) => (
+            <div className="hidden lg:grid grid-cols-2 gap-8 xl:gap-12 max-w-4xl w-full">
+              {displayCategories.slice(0, 4).map((category, index) => (
                 <Link key={category.id || index} href={`/collections/${category.slug || category.id}`}>
                   <Card className="group overflow-hidden cursor-pointer border-luxury border-gray-200 hover:border-gray-400 transition-all duration-300 bg-white h-full">
                     <div className="relative h-80 lg:h-96 overflow-hidden bg-gray-50">

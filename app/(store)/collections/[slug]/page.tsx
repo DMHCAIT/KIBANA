@@ -215,7 +215,7 @@ export default async function CollectionPage({ params, searchParams }: Collectio
 
 function ProductGridSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {[...Array(12)].map((_, i) => (
         <div key={i} className="animate-pulse">
           <div className="aspect-square bg-muted rounded-lg mb-4" />
