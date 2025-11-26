@@ -57,42 +57,39 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No products found' }, { status: 400 })
     }
 
-    // First, list all folders in the root of product-images bucket
-    // Try empty string first (root level)
-    let rootFolders: any[] = []
-    let rootError: any = null
-    
-    // Try multiple methods to list root folders
-    const methods = [
-      () => supabase.storage.from('product-images').list('', { limit: 1000, offset: 0 }),
-      () => supabase.storage.from('product-images').list(undefined, { limit: 1000, offset: 0 }),
-      () => supabase.storage.from('product-images').list(null as any, { limit: 1000, offset: 0 }),
-    ]
+    // First, check the products/ subfolder (where folders actually are based on test)
+    let productFolders: any[] = []
+    const { data: productsFolderData, error: productsError } = await supabase.storage
+      .from('product-images')
+      .list('products', {
+        limit: 1000,
+        offset: 0,
+      })
 
-    for (const method of methods) {
-      try {
-        const { data, error } = await method()
-        if (!error && data && data.length > 0) {
-          // Include all items (both files and folders)
-          // In Supabase Storage, folders might not have a clear "isFolder" flag
-          // We'll check by trying to list them
-          rootFolders = data.filter(item => item.id || item.name) // Include items with id or name
-          if (rootFolders.length > 0) {
-            console.log(`✅ Found ${rootFolders.length} items using method`)
-            console.log('Items:', rootFolders.map(f => ({ name: f.name, id: f.id, metadata: f.metadata })))
-            break
-          }
-        } else if (error) {
-          rootError = error
-          console.error('List error:', error.message)
-        }
-      } catch (e: any) {
-        console.warn('List method failed:', e.message)
-      }
+    if (!productsError && productsFolderData) {
+      productFolders = productsFolderData.filter(item => item.name) // Filter items with names
+      console.log(`✅ Found ${productFolders.length} product folders in products/ subfolder`)
+      console.log('Folders:', productFolders.map(f => f.name))
+    } else if (productsError) {
+      console.error('Error listing products folder:', productsError.message)
     }
 
-    // Log what we found
-    console.log(`Found ${rootFolders.length} root folders:`, rootFolders.map(f => f.name || f.id))
+    // Also check root (for backward compatibility)
+    let rootFolders: any[] = []
+    const { data: rootFoldersData } = await supabase.storage
+      .from('product-images')
+      .list('', {
+        limit: 1000,
+        offset: 0,
+      })
+
+    if (rootFoldersData) {
+      rootFolders = rootFoldersData.filter(item => item.name)
+    }
+
+    // Use productFolders as primary source (they're in products/ subfolder)
+    const allFolders = productFolders.length > 0 ? productFolders : rootFolders
+    console.log(`Total folders to check: ${allFolders.length}`)
 
     const results: any[] = []
     const debugInfo: any[] = []
