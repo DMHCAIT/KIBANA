@@ -111,16 +111,15 @@ export async function POST(request: NextRequest) {
             const folderName = folder.name || folder.id
             const normalizedFolderName = normalizeName(folderName)
             
-            // Try multiple matching strategies
-            if (
-              namesMatch(product.name, folderName) ||
-              namesMatch(productSlug, normalizedFolderName) ||
-              normalizedProduct === normalizedFolderName ||
-              productSlug === normalizedFolderName
-            ) {
+            // Try multiple matching strategies - be more lenient
+            const exactMatch = normalizedProduct === normalizedFolderName || productSlug === normalizedFolderName
+            const fuzzyMatch = namesMatch(product.name, folderName) || namesMatch(productSlug, normalizedFolderName)
+            const containsMatch = normalizedProduct.includes(normalizedFolderName) || normalizedFolderName.includes(normalizedProduct)
+            
+            if (exactMatch || fuzzyMatch || containsMatch) {
               matchedFolder = folderName
               folderPath = folderName
-              console.log(`✅ Matched "${product.name}" to folder "${folderName}"`)
+              console.log(`✅ Matched "${product.name}" (${productSlug}) to folder "${folderName}" (${normalizedFolderName})`)
               break
             }
           }
@@ -154,13 +153,26 @@ export async function POST(request: NextRequest) {
       }
 
       if (!matchedFolder) {
-        const availableFolders = rootFolders?.map(f => f.name || f.id).join(', ') || 'none'
+        const availableFolders = rootFolders?.map(f => {
+          const fn = f.name || f.id
+          const normalized = normalizeName(fn)
+          return `${fn} (normalized: ${normalized})`
+        }).join(', ') || 'none'
+        
         debugInfo.push({ 
           product: product.name, 
-          slug: productSlug, 
+          slug: productSlug,
+          normalizedSlug: normalizedProduct,
           status: 'no_folder_found',
           availableFolders: availableFolders,
-          rootFoldersCount: rootFolders?.length || 0
+          rootFoldersCount: rootFolders?.length || 0,
+          triedMatching: {
+            exact: rootFolders?.some(f => {
+              const fn = normalizeName(f.name || f.id)
+              return normalizedProduct === fn || productSlug === fn
+            }),
+            fuzzy: rootFolders?.some(f => namesMatch(product.name, f.name || f.id)),
+          }
         })
         continue
       }
