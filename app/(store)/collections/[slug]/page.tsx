@@ -191,7 +191,7 @@ export default async function CollectionPage({ params, searchParams }: Collectio
         {/* Hero Section 16:4 Aspect Ratio */}
         {heroImage && (
           <section className="relative w-full overflow-hidden bg-black">
-            <div className="relative w-full" style={{ aspectRatio: '16/4', paddingBottom: '25%' }}>
+            <div className="relative w-full" style={{ aspectRatio: '16/4' }}>
               <Image
                 src={heroImage}
                 alt={category.name}
