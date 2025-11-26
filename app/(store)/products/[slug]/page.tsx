@@ -59,7 +59,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
       *,
       category:categories(*),
       variants:product_variants(*),
-      images:product_images(*)
+      images:product_images(*),
+      specifications
     `)
     .eq('slug', params.slug)
     .eq('is_active', true)
