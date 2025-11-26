@@ -60,40 +60,158 @@ export function ProductForm({ product, categories }: ProductFormProps) {
     setLoading(true)
 
     try {
-      if (product) {
-        // Update existing product
-        const { data: updatedProduct, error } = await supabase
-          .from('products')
-          .update({
-            ...formData,
-            sale_price: formData.sale_price || null,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', product.id)
-          .select()
-          .single()
+      // Save images and variants first
+      const productData = {
+        ...formData,
+        sale_price: formData.sale_price || null,
+        specifications: null, // Can be added later if needed
+      }
 
-        if (error) throw error
+      if (product) {
+        // Update existing product using API route to bypass RLS
+        const response = await fetch('/api/admin/products', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: product.id,
+            ...productData,
+            updated_at: new Date().toISOString(),
+          }),
+        })
+
+        const result = await response.json()
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to update product')
+        }
+
+        // Save images
+        if (images.length > 0) {
+          for (const image of images) {
+            if (image.id && image.id.startsWith('temp-')) {
+              // New image, save it
+              await supabase
+                .from('product_images')
+                .insert({
+                  product_id: product.id,
+                  variant_id: image.variant_id || null,
+                  image_url: image.image_url,
+                  alt_text: image.alt_text || '',
+                  order: image.order || 0,
+                  is_primary: image.is_primary || false,
+                })
+            } else if (image.id) {
+              // Update existing image
+              await supabase
+                .from('product_images')
+                .update({
+                  alt_text: image.alt_text || '',
+                  order: image.order || 0,
+                  is_primary: image.is_primary || false,
+                })
+                .eq('id', image.id)
+            }
+          }
+        }
+
+        // Save variants
+        if (variants.length > 0) {
+          for (const variant of variants) {
+            if (variant.id && variant.id.startsWith('temp-')) {
+              // New variant
+              await supabase
+                .from('product_variants')
+                .insert({
+                  product_id: product.id,
+                  color: variant.color,
+                  size: variant.size,
+                  material: variant.material,
+                  sku: variant.sku,
+                  price: variant.price,
+                  stock_quantity: variant.stock_quantity || 0,
+                  is_active: variant.is_active ?? true,
+                })
+            } else if (variant.id) {
+              // Update existing variant
+              await supabase
+                .from('product_variants')
+                .update({
+                  color: variant.color,
+                  size: variant.size,
+                  material: variant.material,
+                  sku: variant.sku,
+                  price: variant.price,
+                  stock_quantity: variant.stock_quantity || 0,
+                  is_active: variant.is_active ?? true,
+                })
+                .eq('id', variant.id)
+            }
+          }
+        }
 
         toast.success('Product updated successfully')
         router.push('/admin/products')
+        router.refresh()
       } else {
-        // Create new product
-        const { data: newProduct, error } = await supabase
-          .from('products')
-          .insert({
-            ...formData,
-            sale_price: formData.sale_price || null,
-          })
-          .select()
-          .single()
+        // Create new product using API route
+        const response = await fetch('/api/admin/products', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(productData),
+        })
 
-        if (error) throw error
+        const result = await response.json()
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to create product')
+        }
+
+        const newProduct = result.data
+
+        // Save images
+        if (images.length > 0 && newProduct.id) {
+          for (const image of images) {
+            await supabase
+              .from('product_images')
+              .insert({
+                product_id: newProduct.id,
+                variant_id: image.variant_id || null,
+                image_url: image.image_url,
+                alt_text: image.alt_text || '',
+                order: image.order || 0,
+                is_primary: image.is_primary || false,
+              })
+          }
+        }
+
+        // Save variants
+        if (variants.length > 0 && newProduct.id) {
+          for (const variant of variants) {
+            await supabase
+              .from('product_variants')
+              .insert({
+                product_id: newProduct.id,
+                color: variant.color,
+                size: variant.size,
+                material: variant.material,
+                sku: variant.sku,
+                price: variant.price,
+                stock_quantity: variant.stock_quantity || 0,
+                is_active: variant.is_active ?? true,
+              })
+          }
+        }
 
         toast.success('Product created successfully')
         router.push(`/admin/products/${newProduct.slug || newProduct.id}/edit`)
+        router.refresh()
       }
     } catch (error: any) {
+      console.error('Product save error:', error)
       toast.error(error.message || 'Failed to save product')
     } finally {
       setLoading(false)

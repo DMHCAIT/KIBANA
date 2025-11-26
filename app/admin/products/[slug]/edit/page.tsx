@@ -26,8 +26,11 @@ interface EditProductPageProps {
 export default async function EditProductPage({ params }: EditProductPageProps) {
   const supabase = await createClient()
 
-  // Try to find by ID first (for backward compatibility), then by slug
-  const { data: product } = await supabase
+  // Try to find by slug first, then by ID (for backward compatibility)
+  let product = null
+  
+  // First try by slug
+  const { data: productBySlug } = await supabase
     .from('products')
     .select(`
       *,
@@ -35,10 +38,31 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
       variants:product_variants(*),
       images:product_images(*)
     `)
-    .or(`id.eq.${params.slug},slug.eq.${params.slug}`)
+    .eq('slug', params.slug)
     .single()
 
+  if (productBySlug) {
+    product = productBySlug
+  } else {
+    // If not found by slug, try by ID
+    const { data: productById } = await supabase
+      .from('products')
+      .select(`
+        *,
+        category:categories(*),
+        variants:product_variants(*),
+        images:product_images(*)
+      `)
+      .eq('id', params.slug)
+      .single()
+    
+    if (productById) {
+      product = productById
+    }
+  }
+
   if (!product) {
+    console.error(`Product not found with slug/id: ${params.slug}`)
     notFound()
   }
 
