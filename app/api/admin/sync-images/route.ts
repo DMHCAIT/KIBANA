@@ -73,13 +73,18 @@ export async function POST(request: NextRequest) {
       try {
         const { data, error } = await method()
         if (!error && data && data.length > 0) {
-          rootFolders = data.filter(item => item.id) // Only folders/files with IDs
+          // Include all items (both files and folders)
+          // In Supabase Storage, folders might not have a clear "isFolder" flag
+          // We'll check by trying to list them
+          rootFolders = data.filter(item => item.id || item.name) // Include items with id or name
           if (rootFolders.length > 0) {
-            console.log(`✅ Found ${rootFolders.length} items using method:`, method.toString().substring(0, 50))
+            console.log(`✅ Found ${rootFolders.length} items using method`)
+            console.log('Items:', rootFolders.map(f => ({ name: f.name, id: f.id, metadata: f.metadata })))
             break
           }
         } else if (error) {
           rootError = error
+          console.error('List error:', error.message)
         }
       } catch (e: any) {
         console.warn('List method failed:', e.message)
@@ -106,8 +111,8 @@ export async function POST(request: NextRequest) {
       // Try to find matching folder in root
       if (rootFolders && rootFolders.length > 0) {
         for (const folder of rootFolders) {
-          // Check if it's a folder (has id)
-          if (folder.id) {
+          // Check if it has a name or id
+          if (folder.name || folder.id) {
             const folderName = folder.name || folder.id
             const normalizedFolderName = normalizeName(folderName)
             
@@ -116,11 +121,25 @@ export async function POST(request: NextRequest) {
             const fuzzyMatch = namesMatch(product.name, folderName) || namesMatch(productSlug, normalizedFolderName)
             const containsMatch = normalizedProduct.includes(normalizedFolderName) || normalizedFolderName.includes(normalizedProduct)
             
-            if (exactMatch || fuzzyMatch || containsMatch) {
-              matchedFolder = folderName
-              folderPath = folderName
-              console.log(`✅ Matched "${product.name}" (${productSlug}) to folder "${folderName}" (${normalizedFolderName})`)
-              break
+            // Also try direct string comparison (case-insensitive)
+            const directMatch = product.name.toLowerCase().replace(/\s+/g, '-') === folderName.toLowerCase() ||
+                               productSlug.toLowerCase() === folderName.toLowerCase()
+            
+            if (exactMatch || fuzzyMatch || containsMatch || directMatch) {
+              // Verify it's actually a folder by trying to list it
+              const { data: testList } = await supabase.storage
+                .from('product-images')
+                .list(folderName, { limit: 1 })
+              
+              // If we can list it or if it has no extension, it's likely a folder
+              const isLikelyFolder = testList !== null || !folderName.match(/\.(jpg|jpeg|png|webp|gif)$/i)
+              
+              if (isLikelyFolder) {
+                matchedFolder = folderName
+                folderPath = folderName
+                console.log(`✅ Matched "${product.name}" (${productSlug}) to folder "${folderName}" (${normalizedFolderName})`)
+                break
+              }
             }
           }
         }
