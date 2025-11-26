@@ -97,49 +97,33 @@ export async function POST(request: NextRequest) {
     const results: any[] = []
     const debugInfo: any[] = []
 
-    // Log what folders we found
-    console.log('Root folders found:', rootFolders?.map(f => ({ name: f.name, id: f.id, metadata: f.metadata })))
-
-    // For each product, try to find matching folders
+    // For each product, try to find matching folders in products/ subfolder
     for (const product of products) {
       const productSlug = normalizeName(product.slug || product.name)
       let matchedFolder: string | null = null
       let folderPath = ''
-
       const normalizedProduct = normalizeName(product.name)
       
-      // Try to find matching folder in root
-      if (rootFolders && rootFolders.length > 0) {
-        for (const folder of rootFolders) {
-          // Check if it has a name or id
-          if (folder.name || folder.id) {
-            const folderName = folder.name || folder.id
+      // Try to find matching folder in products/ subfolder (primary location)
+      if (allFolders && allFolders.length > 0) {
+        for (const folder of allFolders) {
+          if (folder.name) {
+            const folderName = folder.name
             const normalizedFolderName = normalizeName(folderName)
             
-            // Try multiple matching strategies - be more lenient
+            // Try multiple matching strategies
             const exactMatch = normalizedProduct === normalizedFolderName || productSlug === normalizedFolderName
             const fuzzyMatch = namesMatch(product.name, folderName) || namesMatch(productSlug, normalizedFolderName)
             const containsMatch = normalizedProduct.includes(normalizedFolderName) || normalizedFolderName.includes(normalizedProduct)
-            
-            // Also try direct string comparison (case-insensitive)
             const directMatch = product.name.toLowerCase().replace(/\s+/g, '-') === folderName.toLowerCase() ||
                                productSlug.toLowerCase() === folderName.toLowerCase()
             
             if (exactMatch || fuzzyMatch || containsMatch || directMatch) {
-              // Verify it's actually a folder by trying to list it
-              const { data: testList } = await supabase.storage
-                .from('product-images')
-                .list(folderName, { limit: 1 })
-              
-              // If we can list it or if it has no extension, it's likely a folder
-              const isLikelyFolder = testList !== null || !folderName.match(/\.(jpg|jpeg|png|webp|gif)$/i)
-              
-              if (isLikelyFolder) {
-                matchedFolder = folderName
-                folderPath = folderName
-                console.log(`✅ Matched "${product.name}" (${productSlug}) to folder "${folderName}" (${normalizedFolderName})`)
-                break
-              }
+              matchedFolder = folderName
+              // Use 'products/' prefix if folders are in products subfolder
+              folderPath = productFolders.length > 0 ? `products/${folderName}` : folderName
+              console.log(`✅ Matched "${product.name}" (${productSlug}) to folder "${folderName}"`)
+              break
             }
           }
         }
@@ -147,33 +131,14 @@ export async function POST(request: NextRequest) {
       
       // Log for debugging if no match found
       if (!matchedFolder) {
-        const availableFolders = rootFolders?.map(f => f.name || f.id).filter(Boolean).join(', ') || 'none'
-        console.log(`❌ Product "${product.name}" (slug: ${productSlug}) - No match found. Available: ${availableFolders}`)
-      }
-
-      // If not found in root, try products/ subfolder
-      if (!matchedFolder) {
-        const { data: productsFolders } = await supabase.storage
-          .from('product-images')
-          .list('products', {
-            limit: 1000,
-            offset: 0,
-          })
-
-        if (productsFolders) {
-          for (const folder of productsFolders) {
-            if (folder.id && namesMatch(product.name, folder.name)) {
-              matchedFolder = folder.name
-              folderPath = `products/${folder.name}`
-              break
-            }
-          }
-        }
+        const availableFolders = allFolders?.map(f => f.name).filter(Boolean).join(', ') || 'none'
+        console.log(`❌ Product "${product.name}" (slug: ${productSlug}, normalized: ${normalizedProduct}) - No match found.`)
+        console.log(`   Available folders: ${availableFolders}`)
       }
 
       if (!matchedFolder) {
-        const availableFolders = rootFolders?.map(f => {
-          const fn = f.name || f.id
+        const availableFolders = allFolders?.map(f => {
+          const fn = f.name
           const normalized = normalizeName(fn)
           return `${fn} (normalized: ${normalized})`
         }).join(', ') || 'none'
@@ -184,14 +149,8 @@ export async function POST(request: NextRequest) {
           normalizedSlug: normalizedProduct,
           status: 'no_folder_found',
           availableFolders: availableFolders,
-          rootFoldersCount: rootFolders?.length || 0,
-          triedMatching: {
-            exact: rootFolders?.some(f => {
-              const fn = normalizeName(f.name || f.id)
-              return normalizedProduct === fn || productSlug === fn
-            }),
-            fuzzy: rootFolders?.some(f => namesMatch(product.name, f.name || f.id)),
-          }
+          foldersCount: allFolders?.length || 0,
+          location: productFolders.length > 0 ? 'products/' : 'root',
         })
         continue
       }
