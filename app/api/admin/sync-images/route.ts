@@ -12,6 +12,8 @@ function normalizeName(name: string): string {
 
 // Helper to check if two names match (fuzzy matching)
 function namesMatch(productName: string, folderName: string): boolean {
+  if (!productName || !folderName) return false
+  
   const normalizedProduct = normalizeName(productName)
   const normalizedFolder = normalizeName(folderName)
   
@@ -24,8 +26,8 @@ function namesMatch(productName: string, folderName: string): boolean {
   }
   
   // Check word-by-word matching
-  const productWords = normalizedProduct.split('-').filter(w => w.length > 2)
-  const folderWords = normalizedFolder.split('-').filter(w => w.length > 2)
+  const productWords = normalizedProduct.split('-').filter(w => w.length > 1)
+  const folderWords = normalizedFolder.split('-').filter(w => w.length > 1)
   
   if (productWords.length === 0 || folderWords.length === 0) return false
   
@@ -34,7 +36,8 @@ function namesMatch(productName: string, folderName: string): boolean {
   )
   
   // If at least 50% of words match, consider it a match
-  return matchingWords.length >= Math.ceil(Math.min(productWords.length, folderWords.length) * 0.5)
+  const minWords = Math.min(productWords.length, folderWords.length)
+  return matchingWords.length >= Math.ceil(minWords * 0.5)
 }
 
 export async function POST(request: NextRequest) {
@@ -55,19 +58,41 @@ export async function POST(request: NextRequest) {
     }
 
     // First, list all folders in the root of product-images bucket
-    const { data: rootFolders, error: rootError } = await supabase.storage
+    // Try empty string first (root level)
+    let rootFolders: any[] = []
+    const { data: rootFoldersData, error: rootError } = await supabase.storage
       .from('product-images')
       .list('', {
         limit: 1000,
         offset: 0,
       })
 
-    if (rootError) {
-      console.error('Error listing root folders:', rootError.message)
+    if (!rootError && rootFoldersData) {
+      rootFolders = rootFoldersData.filter(item => item.id) // Only folders/files with IDs
+    }
+
+    // Also try listing with no path parameter (some Supabase versions need this)
+    if (rootFolders.length === 0) {
+      try {
+        const { data: altRootFolders } = await supabase.storage
+          .from('product-images')
+          .list(undefined, {
+            limit: 1000,
+            offset: 0,
+          })
+        if (altRootFolders) {
+          rootFolders = altRootFolders.filter(item => item.id)
+        }
+      } catch (e) {
+        console.warn('Alternative list method failed:', e)
+      }
     }
 
     const results: any[] = []
     const debugInfo: any[] = []
+
+    // Log what folders we found
+    console.log('Root folders found:', rootFolders?.map(f => ({ name: f.name, id: f.id, metadata: f.metadata })))
 
     // For each product, try to find matching folders
     for (const product of products) {
@@ -75,15 +100,36 @@ export async function POST(request: NextRequest) {
       let matchedFolder: string | null = null
       let folderPath = ''
 
+      const normalizedProduct = normalizeName(product.name)
+      
       // Try to find matching folder in root
-      if (rootFolders) {
+      if (rootFolders && rootFolders.length > 0) {
         for (const folder of rootFolders) {
-          if (folder.id && namesMatch(product.name, folder.name)) {
-            matchedFolder = folder.name
-            folderPath = folder.name
-            break
+          // Check if it's a folder (has id)
+          if (folder.id) {
+            const folderName = folder.name || folder.id
+            const normalizedFolderName = normalizeName(folderName)
+            
+            // Try multiple matching strategies
+            if (
+              namesMatch(product.name, folderName) ||
+              namesMatch(productSlug, normalizedFolderName) ||
+              normalizedProduct === normalizedFolderName ||
+              productSlug === normalizedFolderName
+            ) {
+              matchedFolder = folderName
+              folderPath = folderName
+              console.log(`✅ Matched "${product.name}" to folder "${folderName}"`)
+              break
+            }
           }
         }
+      }
+      
+      // Log for debugging if no match found
+      if (!matchedFolder) {
+        const availableFolders = rootFolders?.map(f => f.name || f.id).filter(Boolean).join(', ') || 'none'
+        console.log(`❌ Product "${product.name}" (slug: ${productSlug}) - No match found. Available: ${availableFolders}`)
       }
 
       // If not found in root, try products/ subfolder
@@ -107,7 +153,14 @@ export async function POST(request: NextRequest) {
       }
 
       if (!matchedFolder) {
-        debugInfo.push({ product: product.name, slug: productSlug, status: 'no_folder_found' })
+        const availableFolders = rootFolders?.map(f => f.name || f.id).join(', ') || 'none'
+        debugInfo.push({ 
+          product: product.name, 
+          slug: productSlug, 
+          status: 'no_folder_found',
+          availableFolders: availableFolders,
+          rootFoldersCount: rootFolders?.length || 0
+        })
         continue
       }
 
