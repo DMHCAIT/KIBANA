@@ -41,7 +41,7 @@ export function StorySection() {
         scrollTrigger: {
           trigger: textRef.current,
           start: 'top 80%',
-          toggleActions: 'play none none reverse',
+          toggleActions: 'play none none none',
         },
         duration: 1,
         ease: 'power3.out',

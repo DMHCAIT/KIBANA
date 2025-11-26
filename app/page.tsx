@@ -96,7 +96,6 @@ export default async function HomePage() {
           <HeroSection banner={banner || undefined} />
           <div className="space-y-16 md:space-y-20 lg:space-y-24">
             <FeaturedCategories categories={categories} />
-            <FeaturedProducts products={featuredProducts} />
             <Bestsellers products={bestsellers} />
             <StorySection />
             <TestimonialsSection />

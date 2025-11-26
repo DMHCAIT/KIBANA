@@ -53,7 +53,11 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 export default async function ProductPage({ params }: ProductPageProps) {
   const supabase = await createClient()
 
-  const { data: product } = await supabase
+  // Try to find by slug first, then by ID (for backward compatibility)
+  let product = null
+  
+  // First try by slug
+  const { data: productBySlug } = await supabase
     .from('products')
     .select(`
       *,
@@ -66,7 +70,30 @@ export default async function ProductPage({ params }: ProductPageProps) {
     .eq('is_active', true)
     .single()
 
+  if (productBySlug) {
+    product = productBySlug
+  } else {
+    // If not found by slug, try by ID
+    const { data: productById } = await supabase
+      .from('products')
+      .select(`
+        *,
+        category:categories(*),
+        variants:product_variants(*),
+        images:product_images(*),
+        specifications
+      `)
+      .eq('id', params.slug)
+      .eq('is_active', true)
+      .single()
+    
+    if (productById) {
+      product = productById
+    }
+  }
+
   if (!product) {
+    console.error(`Product not found with slug/id: ${params.slug}`)
     notFound()
   }
 

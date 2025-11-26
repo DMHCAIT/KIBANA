@@ -63,8 +63,7 @@ export function TestimonialsSection() {
         scrollTrigger: {
           trigger: card,
           start: 'top 80%',
-          end: 'top 50%',
-          toggleActions: 'play none none reverse',
+          toggleActions: 'play none none none',
         },
         delay: index * 0.1,
         duration: 0.8,

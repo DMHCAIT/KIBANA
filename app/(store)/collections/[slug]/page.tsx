@@ -8,6 +8,7 @@ import { ProductViewToggle } from '@/components/store/ProductViewToggle'
 import { Suspense } from 'react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 
 export const dynamic = 'force-dynamic'
 
@@ -148,25 +149,98 @@ export default async function CollectionPage({ params, searchParams }: Collectio
   
   const brands = Array.from(new Set(brandsData?.map((p: { brand: string }) => p.brand).filter(Boolean))) as string[]
 
+  // Get category image for hero
+  const getCategoryImage = (categoryName: string, bannerImage?: string | null): string => {
+    if (bannerImage) return bannerImage
+    
+    const categoryImageMap: Record<string, string> = {
+      'Backpack': '/BACKPACK.jpg',
+      'backpack': '/BACKPACK.jpg',
+      'Clutch': '/CLUTCH.jpg',
+      'clutch': '/CLUTCH.jpg',
+      'Laptop Bag': '/LAPTOP%20BAG.jpg',
+      'laptop bag': '/LAPTOP%20BAG.jpg',
+      'Sling Bag': '/SLING%20BAG.jpg',
+      'sling bag': '/SLING%20BAG.jpg',
+      'Tote Bag': '/TOTE%20BAG.jpg',
+      'tote bag': '/TOTE%20BAG.jpg',
+      'Wallet': '/WALLET.jpg',
+      'wallet': '/WALLET.jpg',
+    }
+    
+    if (categoryImageMap[categoryName]) {
+      return categoryImageMap[categoryName]
+    }
+    
+    const lowerName = categoryName.toLowerCase()
+    for (const [key, value] of Object.entries(categoryImageMap)) {
+      if (lowerName.includes(key.toLowerCase()) || key.toLowerCase().includes(lowerName)) {
+        return value
+      }
+    }
+    
+    return ''
+  }
+
+  const heroImage = getCategoryImage(category.name, category.banner_image)
+
   return (
     <div className="flex min-h-screen flex-col bg-white">
       <StoreHeader />
       <main className="flex-1">
+        {/* Hero Section 16:4 Aspect Ratio */}
+        {heroImage && (
+          <section className="relative w-full overflow-hidden bg-black">
+            <div className="relative w-full" style={{ aspectRatio: '16/4', paddingBottom: '25%' }}>
+              <Image
+                src={heroImage}
+                alt={category.name}
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-black/30" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center px-4">
+                  <h1 className="font-hero text-4xl md:text-5xl lg:text-6xl mb-4 text-white leading-tight tracking-tight">
+                    {category.name}
+                  </h1>
+                  {category.description && (
+                    <p className="font-body text-base md:text-lg text-white/90 max-w-2xl mx-auto">
+                      {category.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         <div className="container px-4 py-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="font-hero text-4xl md:text-5xl lg:text-6xl mb-2 text-gray-900 leading-tight tracking-tight">
-              {category.name}
-            </h1>
-            {category.description && (
-              <p className="font-body text-base md:text-lg text-gray-600 max-w-3xl">
-                {category.description}
+          {/* Header (if no hero) */}
+          {!heroImage && (
+            <div className="mb-8">
+              <h1 className="font-hero text-4xl md:text-5xl lg:text-6xl mb-2 text-gray-900 leading-tight tracking-tight">
+                {category.name}
+              </h1>
+              {category.description && (
+                <p className="font-body text-base md:text-lg text-gray-600 max-w-3xl">
+                  {category.description}
+                </p>
+              )}
+              <p className="font-body text-sm text-gray-500 mt-2">
+                {count || 0} {count === 1 ? 'product' : 'products'}
               </p>
-            )}
-            <p className="font-body text-sm text-gray-500 mt-2">
-              {count || 0} {count === 1 ? 'product' : 'products'}
-            </p>
-          </div>
+            </div>
+          )}
+
+          {heroImage && (
+            <div className="mb-8 text-center">
+              <p className="font-body text-sm text-gray-500">
+                {count || 0} {count === 1 ? 'product' : 'products'}
+              </p>
+            </div>
+          )}
 
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar Filters */}

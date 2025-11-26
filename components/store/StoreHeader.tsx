@@ -25,38 +25,8 @@ export function StoreHeader() {
           />
         </Link>
 
-        {/* Search Bar */}
-        <div className="hidden flex-1 max-w-lg mx-8 lg:flex">
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                if (searchQuery.trim()) {
-                  window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`
-                }
-              }}
-              className="w-full"
-            >
-              <Input
-                type="search"
-                placeholder="Search handbags, brands, styles..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 h-10 border-gray-300 focus:border-black transition-colors"
-              />
-            </form>
-          </div>
-        </div>
-
         {/* Navigation */}
         <nav className="hidden lg:flex items-center space-x-8">
-          <Link 
-            href="/products" 
-            className="font-menu text-sm text-gray-900 hover:text-gray-600 transition-colors"
-          >
-            Shop
-          </Link>
           <Link 
             href="/collections" 
             className="font-menu text-sm text-gray-900 hover:text-gray-600 transition-colors"
@@ -73,11 +43,6 @@ export function StoreHeader() {
 
         {/* Actions */}
         <div className="flex items-center space-x-1">
-          <Button variant="ghost" size="icon" className="h-10 w-10 hover:bg-gray-100" asChild>
-            <Link href="/search">
-              <Search className="h-5 w-5 text-gray-900" />
-            </Link>
-          </Button>
           <Button variant="ghost" size="icon" className="h-10 w-10 hover:bg-gray-100 relative" asChild>
             <Link href="/wishlist">
               <Heart className="h-5 w-5 text-gray-900" />
