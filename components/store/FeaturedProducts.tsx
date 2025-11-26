@@ -39,10 +39,10 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
           </div>
         ) : (
           <>
-            {/* Centered Grid for Desktop */}
+            {/* Centered Grid for Desktop - 2x2 Grid */}
             <div className="flex justify-center">
-              <div className="hidden lg:grid grid-cols-2 xl:grid-cols-4 gap-8 xl:gap-12 max-w-7xl w-full">
-                {displayProducts.slice(0, 8).map((product) => (
+              <div className="hidden lg:grid grid-cols-2 gap-8 xl:gap-12 max-w-4xl w-full">
+                {displayProducts.slice(0, 4).map((product) => (
                   <div key={product.id}>
                     <ProductCard product={product} />
                   </div>
