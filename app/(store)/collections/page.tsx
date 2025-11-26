@@ -41,6 +41,41 @@ export default async function CollectionsPage() {
 
   const displayCategories: Category[] = categories || []
 
+  // Map category names to provided images
+  const getCategoryImage = (categoryName: string, bannerImage?: string | null): string => {
+    if (bannerImage) return bannerImage
+    
+    const categoryImageMap: Record<string, string> = {
+      'Backpack': '/BACKPACK.jpg',
+      'backpack': '/BACKPACK.jpg',
+      'Clutch': '/CLUTCH.jpg',
+      'clutch': '/CLUTCH.jpg',
+      'Laptop Bag': '/LAPTOP BAG.jpg',
+      'laptop bag': '/LAPTOP BAG.jpg',
+      'Sling Bag': '/SLING BAG.jpg',
+      'sling bag': '/SLING BAG.jpg',
+      'Tote Bag': '/TOTE BAG.jpg',
+      'tote bag': '/TOTE BAG.jpg',
+      'Wallet': '/WALLET.jpg',
+      'wallet': '/WALLET.jpg',
+    }
+    
+    // Try exact match first
+    if (categoryImageMap[categoryName]) {
+      return categoryImageMap[categoryName]
+    }
+    
+    // Try case-insensitive partial match
+    const lowerName = categoryName.toLowerCase()
+    for (const [key, value] of Object.entries(categoryImageMap)) {
+      if (lowerName.includes(key.toLowerCase()) || key.toLowerCase().includes(lowerName)) {
+        return value
+      }
+    }
+    
+    return ''
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-white">
       <StoreHeader />
@@ -151,20 +186,23 @@ export default async function CollectionsPage() {
                       <Card className="group overflow-hidden cursor-pointer border-luxury border-gray-200 hover:border-gray-400 transition-all duration-300 bg-white h-full">
                         {/* Image Section */}
                         <div className="relative h-80 lg:h-96 overflow-hidden bg-gray-50">
-                          {category.banner_image ? (
-                            <Image
-                              src={category.banner_image}
-                              alt={category.name}
-                              fill
-                              className="object-cover group-hover:scale-105 transition-transform duration-700"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <span className="text-8xl font-hero text-gray-200">
-                                {category.name.charAt(0)}
-                              </span>
-                            </div>
-                          )}
+                          {(() => {
+                            const imageUrl = getCategoryImage(category.name, category.banner_image)
+                            return imageUrl ? (
+                              <Image
+                                src={imageUrl}
+                                alt={category.name}
+                                fill
+                                className="object-cover group-hover:scale-105 transition-transform duration-700"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <span className="text-8xl font-hero text-gray-200">
+                                  {category.name.charAt(0)}
+                                </span>
+                              </div>
+                            )
+                          })()}
                         </div>
                         
                         {/* Content Section */}
