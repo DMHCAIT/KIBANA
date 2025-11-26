@@ -1,18 +1,25 @@
 import { createClient } from '@/lib/supabase/server'
 import { StoreHeader } from '@/components/store/StoreHeader'
 import { StoreFooter } from '@/components/store/StoreFooter'
+import { Breadcrumbs } from '@/components/store/Breadcrumbs'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
-import { ShoppingBag } from 'lucide-react'
+import { ShoppingBag, Package, Sparkles, TrendingUp } from 'lucide-react'
 import { Metadata } from 'next'
 import { Category } from '@/types'
 import { Button } from '@/components/ui/button'
 
 export const metadata: Metadata = {
   title: 'Collections | KIBANA - Luxury Handbags',
-  description: 'Browse our complete collection of luxury handbag collections',
+  description: 'Browse our complete collection of luxury handbag collections. Discover curated styles for every occasion.',
+  openGraph: {
+    title: 'Collections | KIBANA - Luxury Handbags',
+    description: 'Browse our complete collection of luxury handbag collections',
+  },
 }
+
+export const dynamic = 'force-dynamic'
 
 export default async function CollectionsPage() {
   const supabase = await createClient()
@@ -40,6 +47,30 @@ export default async function CollectionsPage() {
     .order('order', { ascending: true })
 
   const displayCategories: Category[] = categories || []
+
+  // Get total products count
+  const { count: totalProductsCount } = await supabase
+    .from('products')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_active', true)
+
+  // Get featured products count
+  const { count: featuredCount } = await supabase
+    .from('products')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_active', true)
+    .eq('is_featured', true)
+
+  // Get product counts per category
+  const categoryProductCounts: Record<string, number> = {}
+  for (const category of displayCategories) {
+    const { count } = await supabase
+      .from('products')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true)
+      .eq('category_id', category.id)
+    categoryProductCounts[category.id] = count || 0
+  }
 
   // Map category names to provided images
   const getCategoryImage = (categoryName: string, bannerImage?: string | null): string => {
@@ -80,6 +111,37 @@ export default async function CollectionsPage() {
     <div className="flex min-h-screen flex-col bg-white">
       <StoreHeader />
       <main className="flex-1 bg-white">
+        
+        {/* Stats Bar - Only show if no banner */}
+        {!banner && (
+          <section className="bg-gradient-to-r from-gray-50 to-gray-100 border-b">
+            <div className="container px-4 py-6">
+              <div className="grid grid-cols-3 gap-4 max-w-3xl mx-auto">
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 mb-2">
+                    <Package className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">{displayCategories.length}</p>
+                  <p className="text-xs text-gray-600">Collections</p>
+                </div>
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-purple-100 mb-2">
+                    <Sparkles className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">{totalProductsCount || 0}</p>
+                  <p className="text-xs text-gray-600">Products</p>
+                </div>
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-green-100 mb-2">
+                    <TrendingUp className="h-5 w-5 text-green-600" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">{featuredCount || 0}</p>
+                  <p className="text-xs text-gray-600">Featured</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
         {/* Hero Section with Small Banner */}
         {banner && (banner.image_url || banner.video_url) && (
           <section className="relative w-full h-[40vh] min-h-[300px] max-h-[400px] overflow-hidden bg-black">
@@ -142,22 +204,23 @@ export default async function CollectionsPage() {
         {/* Collections Content */}
         <section className="w-full bg-white section-luxury">
           <div className="container px-4 sm:px-6 lg:px-8 mx-auto">
+            {/* Breadcrumbs */}
+            <div className="pt-8">
+              <Breadcrumbs 
+                items={[
+                  { label: 'Collections' }
+                ]}
+              />
+            </div>
+
             {!banner && (
               <div className="text-center mb-16 md:mb-20 lg:mb-24">
                 <h1 className="font-hero text-4xl md:text-5xl lg:text-6xl mb-8 md:mb-10 text-gray-900 leading-tight tracking-tight">
-                  Collections
+                  Our Collections
                 </h1>
-                <p className="font-body text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
-                  Discover our curated collection of luxury handbags, organized by style and purpose
-                </p>
-              </div>
-            )}
-
-            {/* Collections Count */}
-            {displayCategories.length > 0 && (
-              <div className="mb-12 md:mb-16 text-center">
-                <p className="font-body text-sm text-gray-500 uppercase tracking-wider">
-                  {displayCategories.length} {displayCategories.length === 1 ? 'Collection' : 'Collections'}
+                <p className="font-body text-base md:text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                  Discover our curated collection of luxury handbags, organized by style and purpose. 
+                  Each collection tells a unique story of craftsmanship and elegance.
                 </p>
               </div>
             )}
@@ -181,52 +244,61 @@ export default async function CollectionsPage() {
             ) : (
               <div className="flex justify-center">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8 xl:gap-12 max-w-6xl w-full">
-                  {displayCategories.map((category: Category) => (
-                    <Link key={category.id} href={`/collections/${category.slug || category.id}`}>
-                      <Card className="group overflow-hidden cursor-pointer border-luxury border-gray-200 hover:border-gray-400 transition-all duration-300 bg-white h-full">
-                        {/* Image Section */}
-                        <div className="relative h-80 lg:h-96 overflow-hidden bg-gray-50">
-                          {(() => {
-                            const imageUrl = getCategoryImage(category.name, category.banner_image)
-                            return imageUrl ? (
-                              <Image
-                                src={imageUrl}
-                                alt={category.name}
-                                fill
-                                className="object-cover group-hover:scale-105 transition-transform duration-700"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center">
-                                <span className="text-8xl font-hero text-gray-200">
-                                  {category.name.charAt(0)}
+                  {displayCategories.map((category: Category) => {
+                    const productCount = categoryProductCounts[category.id] || 0
+                    return (
+                      <Link key={category.id} href={`/collections/${category.slug || category.id}`}>
+                        <Card className="group overflow-hidden cursor-pointer border-luxury border-gray-200 hover:border-gray-400 hover:shadow-xl transition-all duration-300 bg-white h-full">
+                          {/* Image Section */}
+                          <div className="relative h-80 lg:h-96 overflow-hidden bg-gray-50">
+                            {(() => {
+                              const imageUrl = getCategoryImage(category.name, category.banner_image)
+                              return imageUrl ? (
+                                <Image
+                                  src={imageUrl}
+                                  alt={category.name}
+                                  fill
+                                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <span className="text-8xl font-hero text-gray-200">
+                                    {category.name.charAt(0)}
+                                  </span>
+                                </div>
+                              )
+                            })()}
+                            {/* Product Count Badge */}
+                            {productCount > 0 && (
+                              <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-md">
+                                <span className="text-xs font-semibold text-gray-900">
+                                  {productCount} {productCount === 1 ? 'Item' : 'Items'}
                                 </span>
                               </div>
-                            )
-                          })()}
-                        </div>
-                        
-                        {/* Content Section */}
-                        <CardContent className="p-6 md:p-8 text-center">
-                          <h3 className="font-menu text-base md:text-lg mb-3 text-gray-900 tracking-wide">
-                            {category.name.toUpperCase()}
-                          </h3>
-                          {category.description && (
-                            <p className="font-body text-sm text-gray-600 mt-3 line-clamp-2 leading-relaxed">
-                              {category.description}
-                            </p>
-                          )}
-                          <div className="mt-6 pt-6 border-luxury border-t border-gray-100">
-                            <Link 
-                              href={`/collections/${category.slug || category.id}`}
-                              className="font-menu text-xs text-gray-500 hover:text-gray-900 transition-colors uppercase tracking-wider"
-                            >
-                              View Collection →
-                            </Link>
+                            )}
                           </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  ))}
+                          
+                          {/* Content Section */}
+                          <CardContent className="p-6 md:p-8 text-center">
+                            <h3 className="font-menu text-base md:text-lg mb-3 text-gray-900 tracking-wide group-hover:text-gray-600 transition-colors">
+                              {category.name.toUpperCase()}
+                            </h3>
+                            {category.description && (
+                              <p className="font-body text-sm text-gray-600 mt-3 line-clamp-2 leading-relaxed">
+                                {category.description}
+                              </p>
+                            )}
+                            <div className="mt-6 pt-6 border-luxury border-t border-gray-100">
+                              <span className="inline-flex items-center gap-2 font-menu text-xs text-gray-500 group-hover:text-gray-900 transition-colors uppercase tracking-wider">
+                                Explore Collection 
+                                <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
+                              </span>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    )
+                  })}
                 </div>
               </div>
             )}

@@ -5,6 +5,9 @@ import { ProductGrid } from '@/components/store/ProductGrid'
 import { ProductFilters } from '@/components/store/ProductFilters'
 import { ProductSort } from '@/components/store/ProductSort'
 import { ProductViewToggle } from '@/components/store/ProductViewToggle'
+import { Breadcrumbs } from '@/components/store/Breadcrumbs'
+import { CollectionHighlights } from '@/components/store/CollectionHighlights'
+import { RelatedCollections } from '@/components/store/RelatedCollections'
 import { Suspense } from 'react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
@@ -47,8 +50,8 @@ export async function generateMetadata({ params }: CollectionPageProps): Promise
     
     if (allCategories) {
       const matched = allCategories.find(
-        cat => cat.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') === normalizedSlug
-      ) || allCategories.find(cat => cat.name?.toLowerCase().includes(normalizedSlug))
+        (cat: { name: string | null; description: string | null }) => cat.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') === normalizedSlug
+      ) || allCategories.find((cat: { name: string | null; description: string | null }) => cat.name?.toLowerCase().includes(normalizedSlug))
       
       if (matched) {
         category = matched
@@ -93,13 +96,13 @@ export default async function CollectionPage({ params, searchParams }: Collectio
     
     if (allCategories) {
       const matchedCategory = allCategories.find(
-        cat => cat.slug?.toLowerCase() === normalizedSlug
+        (cat: any) => cat.slug?.toLowerCase() === normalizedSlug
       )
       if (matchedCategory) {
         category = matchedCategory
       } else {
         // Method 3: Try matching by name (normalized)
-        const matchedByName = allCategories.find(cat => {
+        const matchedByName = allCategories.find((cat: any) => {
           const normalizedName = cat.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
           return normalizedName === normalizedSlug || normalizedName?.includes(normalizedSlug) || normalizedSlug.includes(normalizedName)
         })
@@ -150,7 +153,7 @@ export default async function CollectionPage({ params, searchParams }: Collectio
       .eq('is_active', true)
     
     if (allCategories) {
-      const matchedCategory = allCategories.find(cat => {
+      const matchedCategory = allCategories.find((cat: any) => {
         const normalizedName = cat.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
         return normalizedName === normalizedSlug || normalizedName?.includes(normalizedSlug)
       })
@@ -200,7 +203,7 @@ export default async function CollectionPage({ params, searchParams }: Collectio
   const { data: products, count, error } = await query
     .range(offset, offset + limit - 1)
 
-  // Fetch categories for filter
+  // Fetch categories for filter and related collections
   const { data: categories } = await supabase
     .from('categories')
     .select('*')
@@ -221,6 +224,36 @@ export default async function CollectionPage({ params, searchParams }: Collectio
   } else if (products && products.length > 0) {
     // Extract brands from products if category not found
     brands = Array.from(new Set(products.map((p: any) => p.brand).filter(Boolean))) as string[]
+  }
+
+  // Calculate collection stats
+  let featuredCount = 0
+  let avgPrice = 0
+  let topBrand = ''
+  
+  if (category?.id) {
+    // Get featured count
+    const { count: featCount } = await supabase
+      .from('products')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true)
+      .eq('category_id', category.id)
+      .eq('is_featured', true)
+    
+    featuredCount = featCount || 0
+
+    // Calculate average price
+    if (products && products.length > 0) {
+      const prices = products.map((p: any) => p.sale_price || p.price).filter(Boolean)
+      if (prices.length > 0) {
+        avgPrice = prices.reduce((sum: number, price: number) => sum + price, 0) / prices.length
+      }
+    }
+
+    // Get top brand
+    if (brands.length > 0) {
+      topBrand = brands[0] // Could enhance this to actually count occurrences
+    }
   }
 
   // Get category image for hero
@@ -291,6 +324,12 @@ export default async function CollectionPage({ params, searchParams }: Collectio
         )}
 
         <div className="container px-4 py-8">
+          {/* Breadcrumbs */}
+          <Breadcrumbs 
+            category={category} 
+            collectionMode={true}
+          />
+
           {/* Header (if no hero) */}
           {!heroImage && (
             <div className="mb-8">
@@ -302,19 +341,16 @@ export default async function CollectionPage({ params, searchParams }: Collectio
                   {category.description}
                 </p>
               )}
-              <p className="font-body text-sm text-gray-500 mt-2">
-                {count || 0} {count === 1 ? 'product' : 'products'}
-              </p>
             </div>
           )}
 
-          {heroImage && (
-            <div className="mb-8 text-center">
-              <p className="font-body text-sm text-gray-500">
-                {count || 0} {count === 1 ? 'product' : 'products'}
-              </p>
-            </div>
-          )}
+          {/* Collection Highlights */}
+          <CollectionHighlights
+            totalProducts={count || 0}
+            featuredCount={featuredCount}
+            avgPrice={avgPrice}
+            topBrand={topBrand}
+          />
 
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar Filters */}
@@ -354,6 +390,14 @@ export default async function CollectionPage({ params, searchParams }: Collectio
               </Suspense>
             </div>
           </div>
+
+          {/* Related Collections */}
+          {categories && categories.length > 0 && (
+            <RelatedCollections 
+              collections={categories}
+              currentCollectionId={category.id}
+            />
+          )}
         </div>
       </main>
       <StoreFooter />
