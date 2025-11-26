@@ -4,6 +4,7 @@ import { Plus, Package } from 'lucide-react'
 import Link from 'next/link'
 import { ProductsTable } from '@/components/admin/ProductsTable'
 import { ImportProductsButton } from '@/components/admin/ImportProductsButton'
+import { SyncImagesButton } from '@/components/admin/SyncImagesButton'
 import { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
@@ -24,7 +25,8 @@ export default async function AdminProductsPage() {
     .from('products')
     .select(`
       *,
-      category:categories(*)
+      category:categories(*),
+      images:product_images(*)
     `)
     .order('created_at', { ascending: false })
 
@@ -43,7 +45,8 @@ export default async function AdminProductsPage() {
               <p className="text-muted-foreground mt-1">Manage your product catalog</p>
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap">
+            <SyncImagesButton />
             <ImportProductsButton />
             <Button asChild className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all">
               <Link href="/admin/products/new">
