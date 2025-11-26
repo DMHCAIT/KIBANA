@@ -28,12 +28,37 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   },
 })
 
-// Product data from spreadsheet - matching actual folder names
+// Product data with complete details
 const productsData = [
   {
     name: 'VISTARA TOTE',
     category: 'Tote Bag',
     price: 4999,
+    brand: 'KIBANA',
+    description: `VISTARA- (means "expanse", also hints at the V-shape)
+
+Youth-Trendy Brand Style (Bold, Catchy, Fashionable)
+
+VISTARA– Bold. Stylish. Limitless. With its striking V-shape pattern and chic structured body, Vistara brings a fresh vibe to everyday fashion. A bag that's as versatile as you are — from work to weekends, it's your go-to trendsetter. Carry Vistara and own the expanse of possibilities in style.
+
+Designed for the modern woman who values elegance and confidence, it balances sophistication with everyday functionality — a true luxury statement.`,
+    short_description: 'Bold. Stylish. Limitless. The VISTARA TOTE brings a fresh vibe to everyday fashion with its striking V-shape pattern.',
+    specifications: {
+      dimensions: {
+        length: '38 cm',
+        width: '14 cm',
+        height: '28 cm'
+      },
+      material: '100% PU Leather',
+      texture: 'Smooth, Fine-Grained',
+      closure: 'Magnetic Flap with concealed zipper top',
+      compartments: 'One Main Compartment/Flap/Top Zipper, padded laptop sleeve, inner zip pocket, organizer slip pockets',
+      hardware: 'Gold-Tone Accents',
+      shoulderDrop: 'Detachable long strap (adjustable 50–60 cm) + top handle (8–10 cm drop)',
+      capacity: 'Approx. 14–16 Liters – fits laptop, diary, wallet, makeup pouch, charger, and daily essentials',
+      idealFor: 'Office, meetings, and day-to-evening transitions – a perfect power tote combining elegance with functionality',
+      features: ['"V" stitching', 'Structured shape', 'Elegant design']
+    },
     colors: [
       { name: 'Teal Blue / Dark Blue', folder: 'png( teal blue' },
       { name: 'Mint Green / Pastel Green', folder: 'png( pastel green)' },
@@ -45,9 +70,31 @@ const productsData = [
     name: 'PRIZMA SLING',
     category: 'Sling Bag',
     price: 3999,
+    brand: 'KIBANA',
+    description: `PRIZMA– Luxury–Chic Sling
+
+PRIZMA – Inspired by the brilliance of a prism, this bag reflects bold geometry and refined craftsmanship. Bold geometric cuts and golden clasp create a striking statement, blending modern artistry with timeless elegance. PRIZMA is designed for women who shine in every dimension — sophisticated, confident, and effortlessly stylish.
+
+PRIZMA is sophistication made effortless. Bold. Modern. Unstoppable. With its striking geometric cuts and chic golden hardware, Prizma redefines street-smart luxury. A bag that pairs perfectly with work looks or weekend vibes, it's built for the confident woman who loves to stand out. Carry Prizma and shine at every angle.`,
+    short_description: 'Inspired by the brilliance of a prism, PRIZMA reflects bold geometry and refined craftsmanship.',
+    specifications: {
+      dimensions: {
+        length: '38 cm',
+        width: '14 cm',
+        height: '28 cm'
+      },
+      material: '100% PU Leather',
+      texture: 'Smooth, Fine-Grained',
+      closure: 'Square metallic push-lock (gold finish)',
+      compartments: 'Main compartment (spacious enough for essentials), internal zipper pocket, slip pocket for phone/cards',
+      hardware: 'Gold-Tone Accents',
+      shoulderDrop: '26 cm (adjustable strap included)',
+      capacity: 'Approx. 4–5 Liters – perfect for essentials like wallet, phone, sunglasses, and small accessories',
+      idealFor: 'Evening outings, brunch, parties, and as a chic companion to formal or festive wear'
+    },
     colors: [
-      { name: 'Dark Green', folder: 'PRIZMA SLING png ( dark green )png' },
-      { name: 'Pastel Green', folder: 'PRIZMA SLING png ( PASTEL GREEN ) )' },
+      { name: 'Teal Blue / Dark Blue', folder: 'PRIZMA SLING png ( dark green )png' },
+      { name: 'Mint Green / Pastel Green', folder: 'PRIZMA SLING png ( PASTEL GREEN ) )' },
       { name: 'Mocha Tan', folder: 'PRIZMA SLING png ( brown )' },
       { name: 'Milky Blue', folder: 'PRIZMA SLING png (milky blue ) )' },
     ],
@@ -56,20 +103,64 @@ const productsData = [
     name: 'VISTAPACK',
     category: 'Backpack',
     price: 4499,
+    brand: 'KIBANA',
+    description: `VISTAPACK– simple, sleek, direct fusion (Vistara + Backpack).
+
+"VISTAPACK– Where Structure Meets Style"
+
+Step into a world of effortless charm with the VISTAPACK, a modern emblem of strength, style, and versatility. Defined by its bold chevron-inspired stitching and structured leather silhouette, this backpack whispers stories of movement, freedom, and self-expression. Designed to carry both your essentials and your spirit with ease, it is more than just a bag—it is a companion for journeys, both near and far. Its ergonomic straps embrace you in comfort, while the compact yet functional interior ensures your belongings stay organized wherever life takes you. Just as horizons open up with every step forward, the VISTAPACK symbolizes exploration and resilience, making it a timeless gesture of empowerment and elegance for the modern soul.`,
+    short_description: 'Where Structure Meets Style. A modern emblem of strength, style, and versatility.',
+    specifications: {
+      dimensions: {
+        length: '38 cm',
+        width: '14 cm',
+        height: '28 cm'
+      },
+      material: '100% PU Leather',
+      texture: 'Smooth, Fine-Grained',
+      closure: 'Main top zipper closure, Front Flap Pocket: Envelope-style pocket for quick essentials',
+      compartments: '1 padded compartment (fits iPad / small tablet, up to 11"), 1 zipper pocket, 2 slip pockets (cards, phone, keys)',
+      hardware: 'Gold-Tone Accents',
+      shoulderDrop: 'Adjustable 90 – 130 cm (so it works for both shoulder carry and crossbody)',
+      capacity: 'Approx. 10–12 Liters',
+      idealFor: 'College, casual workdays, city travel, and leisure outings'
+    },
     colors: [
-      { name: 'Dark Green', folder: 'vistapack( dark green )' },
-      { name: 'Green', folder: 'VISTAPACK( green )' },
+      { name: 'Teal Blue / Dark Blue', folder: 'vistapack( dark green )' },
+      { name: 'Mint Green / Pastel Green', folder: 'VISTAPACK( green )' },
       { name: 'Mocha Tan', folder: 'vistapack ( brown )' },
-      { name: 'Blue', folder: 'vistapack ( blue )' },
+      { name: 'Milky Blue', folder: 'vistapack ( blue )' },
     ],
   },
   {
     name: 'SANDESH LAPTOP BAG',
     category: 'Laptop Bag',
     price: 6499,
+    brand: 'KIBANA',
+    description: `Sandesh Laptop Bag – Carry Your Story. Own Your Style.
+
+Inspired by the timeless shape of an envelope, Sandesh blends tradition with trend. Its sharp geometric front and sleek silhouette make it a bold fashion statement, while the smartly designed laptop compartment keeps you ready for work, play, and everything in between. From café catch-ups to boardroom meetings, Sandesh is more than a bag — it's your message to the world.
+
+This highlights the design (envelope flap, geometric layering), functionality (fits laptop, secure zip, front pocket), and luxury feel (textured leather, bold mustard color).`,
+    short_description: 'Carry Your Story. Own Your Style. Inspired by the timeless shape of an envelope.',
+    specifications: {
+      dimensions: {
+        length: '38 cm',
+        width: '14 cm',
+        height: '28 cm'
+      },
+      material: '100% PU Leather',
+      texture: 'Smooth, Fine-Grained',
+      closure: 'Magnetic Flap with concealed zipper for secure storage',
+      compartments: 'One main padded compartment (fits 14"–15.6" laptop), One front envelope-style pocket for documents/tablet, Internal zipper pocket + slip pockets for phone & cards',
+      hardware: 'Gold-Tone Accents',
+      shoulderDrop: 'Detachable long strap (adjustable 50–60 cm) + top handle (8–10 cm drop)',
+      capacity: 'Approx. 12–14 Liters – fits laptop, diary, charger, wallet, phone, and daily essentials',
+      idealFor: 'Professionals, students, and style-conscious users who want a luxury laptop bag with a bold geometric identity'
+    },
     colors: [
-      { name: 'Dark Blue', folder: 'SANDESH LAPTOP BAG dark blue( png )' },
-      { name: 'Green', folder: 'SANDESH LAPTOP BAG png ( green)' },
+      { name: 'Teal Blue / Dark Blue', folder: 'SANDESH LAPTOP BAG dark blue( png )' },
+      { name: 'Mint Green / Pastel Green', folder: 'SANDESH LAPTOP BAG png ( green)' },
       { name: 'Mocha Tan', folder: 'SANDESH LAPTOP BAG png brown' },
       { name: 'Milky Blue', folder: 'SANDESH LAPTOP BAG ( MILKY BLUE)' },
     ],
@@ -78,9 +169,33 @@ const productsData = [
     name: 'Lekha Wallet',
     category: 'Clutch',
     price: 2199,
+    brand: 'KIBANA',
+    description: `Lekha Wallet – A statement of elegance in every line.
+
+Lekha Wallet – Write Your Style.
+
+Inspired by the lines of an envelope, Lekha (meaning writing / record in Sanskrit & Hindi) is a blend of heritage and trend. With its chic geometric cuts, soft leather touch, and vibrant color story, Lekha adds a bold pop to your everyday carry. Compact yet spacious, it's designed to hold more than just essentials — it holds your statement.
+
+This works beautifully as a pair with Sandesh Laptop Bag— you can position them as part of the Indian-rooted "Message & Writing" collection (Sandesh = Message, Lekha = Writing).`,
+    short_description: 'Write Your Style. A statement of elegance in every line.',
+    specifications: {
+      dimensions: {
+        length: '38 cm',
+        width: '14 cm',
+        height: '28 cm'
+      },
+      material: '100% PU Leather',
+      texture: 'Smooth, Fine-Grained',
+      closure: 'Zip-Around Closure with envelope-style panel design',
+      compartments: '2 main cash compartments, 1 center zipper pocket for coins, 6–8 card slots, 2 slip pockets for bills/receipts',
+      hardware: 'Gold-Tone Accents (zipper puller & trims)',
+      shoulderDrop: '26 cm (adjustable strap included)',
+      capacity: 'Designed to hold cash, coins, cards, and small essentials (Approx. 1.5–2 Liters)',
+      idealFor: 'Everyday use, evening outings, and as a stylish companion for both casual and professional looks'
+    },
     colors: [
-      { name: 'Teal Blue', folder: 'lekha teal blue' },
-      { name: 'Pastel Green', folder: 'lekha pastel green png' },
+      { name: 'Teal Blue / Dark Blue', folder: 'lekha teal blue' },
+      { name: 'Mint Green / Pastel Green', folder: 'lekha pastel green png' },
       { name: 'Mocha Tan', folder: 'lekha png brown )' },
       { name: 'Milky Blue', folder: 'lekha milky blue' },
     ],
@@ -89,9 +204,31 @@ const productsData = [
     name: 'Lekha Wallet',
     category: 'Wallet',
     price: 1999,
+    brand: 'KIBANA',
+    description: `Lekha Wallet – A statement of elegance in every line.
+
+Lekha Wallet – Write Your Style.
+
+Inspired by the lines of an envelope, Lekha (meaning writing / record in Sanskrit & Hindi) is a blend of heritage and trend. With its chic geometric cuts, soft leather touch, and vibrant color story, Lekha adds a bold pop to your everyday carry. Compact yet spacious, it's designed to hold more than just essentials — it holds your statement.`,
+    short_description: 'Write Your Style. A statement of elegance in every line.',
+    specifications: {
+      dimensions: {
+        length: '38 cm',
+        width: '14 cm',
+        height: '28 cm'
+      },
+      material: '100% PU Leather',
+      texture: 'Smooth, Fine-Grained',
+      closure: 'Zip-Around Closure with envelope-style panel design',
+      compartments: '2 main cash compartments, 1 center zipper pocket for coins, 6–8 card slots, 2 slip pockets for bills/receipts',
+      hardware: 'Gold-Tone Accents (zipper puller & trims)',
+      shoulderDrop: '26 cm (adjustable strap included)',
+      capacity: 'Designed to hold cash, coins, cards, and small essentials (Approx. 1.5–2 Liters)',
+      idealFor: 'Everyday use, evening outings, and as a stylish companion for both casual and professional looks'
+    },
     colors: [
-      { name: 'Teal Blue', folder: 'lekha png ( pastel green )' },
-      { name: 'Pastel Green', folder: 'lekha png ( pastel green )' },
+      { name: 'Teal Blue / Dark Blue', folder: 'lekha png ( pastel green )' },
+      { name: 'Mint Green / Pastel Green', folder: 'lekha png ( pastel green )' },
     ],
   },
 ]
@@ -277,19 +414,24 @@ async function createProduct(productData, categoryId) {
       return null
     }
   } else {
+    // Build specifications JSON
+    const specifications = productData.specifications ? JSON.stringify(productData.specifications) : null
+    
     const { data, error } = await supabase
       .from('products')
       .insert({
         name: productData.name,
         slug,
-        brand: 'KIBANA',
-        description: `Premium ${productData.name} - Luxury handcrafted design`,
-        short_description: `Premium ${productData.name}`,
+        brand: productData.brand || 'KIBANA',
+        description: productData.description || `Premium ${productData.name} - Luxury handcrafted design`,
+        short_description: productData.short_description || `Premium ${productData.name}`,
         price: productData.price,
         category_id: categoryId,
         is_active: true,
         is_featured: false,
         stock_status: 'in_stock',
+        seo_title: productData.name,
+        seo_description: productData.short_description || productData.description?.substring(0, 160),
       })
       .select()
       .single()

@@ -538,29 +538,209 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
         <TabsContent value="specifications" className="mt-6">
           <Card>
-            <CardContent className="p-6">
-              <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <dt className="font-semibold mb-1">Brand</dt>
-                  <dd className="text-muted-foreground">{product.brand}</dd>
-                </div>
-                {product.category && (
-                  <div>
-                    <dt className="font-semibold mb-1">Category</dt>
-                    <dd className="text-muted-foreground">{product.category.name}</dd>
+            <CardContent className="p-6 space-y-6">
+              {/* Dimensions */}
+              <div>
+                <h3 className="font-hero text-xl mb-4 text-gray-900">Dimensions</h3>
+                <dl className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="border-l-2 border-gray-200 pl-4">
+                    <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-1">Length</dt>
+                    <dd className="font-body text-lg font-semibold text-gray-900">38 cm</dd>
                   </div>
-                )}
-                {materials.length > 0 && (
-                  <div>
-                    <dt className="font-semibold mb-1">Material</dt>
-                    <dd className="text-muted-foreground">{materials.join(', ')}</dd>
+                  <div className="border-l-2 border-gray-200 pl-4">
+                    <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-1">Width</dt>
+                    <dd className="font-body text-lg font-semibold text-gray-900">14 cm</dd>
                   </div>
-                )}
-                <div>
-                  <dt className="font-semibold mb-1">SKU</dt>
-                  <dd className="text-muted-foreground">{selectedVariant?.sku || 'N/A'}</dd>
-                </div>
-              </dl>
+                  <div className="border-l-2 border-gray-200 pl-4">
+                    <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-1">Height</dt>
+                    <dd className="font-body text-lg font-semibold text-gray-900">28 cm</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <Separator />
+
+              {/* Material & Construction */}
+              <div>
+                <h3 className="font-hero text-xl mb-4 text-gray-900">Material & Construction</h3>
+                <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Material</dt>
+                    <dd className="font-body text-gray-900">100% PU Leather</dd>
+                  </div>
+                  <div>
+                    <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Texture</dt>
+                    <dd className="font-body text-gray-900">Smooth, Fine-Grained</dd>
+                  </div>
+                  <div>
+                    <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Hardware</dt>
+                    <dd className="font-body text-gray-900">Gold-Tone Accents</dd>
+                  </div>
+                  {product.category && (
+                    <div>
+                      <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Category</dt>
+                      <dd className="font-body text-gray-900">{product.category.name}</dd>
+                    </div>
+                  )}
+                </dl>
+              </div>
+
+              <Separator />
+
+              {/* Features & Details */}
+              <div>
+                <h3 className="font-hero text-xl mb-4 text-gray-900">Features & Details</h3>
+                <dl className="space-y-4">
+                  {product.name === 'VISTARA TOTE' && (
+                    <>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Closure Type</dt>
+                        <dd className="font-body text-gray-900">Magnetic Flap with concealed zipper top</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Compartments</dt>
+                        <dd className="font-body text-gray-900">One Main Compartment/Flap/Top Zipper, padded laptop sleeve, inner zip pocket, organizer slip pockets</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Shoulder Drop</dt>
+                        <dd className="font-body text-gray-900">Detachable long strap (adjustable 50–60 cm) + top handle (8–10 cm drop)</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Capacity</dt>
+                        <dd className="font-body text-gray-900">Approx. 14–16 Liters – fits laptop, diary, wallet, makeup pouch, charger, and daily essentials</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Ideal For</dt>
+                        <dd className="font-body text-gray-900">Office, meetings, and day-to-evening transitions – a perfect power tote combining elegance with functionality</dd>
+                      </div>
+                    </>
+                  )}
+                  {product.name === 'PRIZMA SLING' && (
+                    <>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Closure Type</dt>
+                        <dd className="font-body text-gray-900">Square metallic push-lock (gold finish)</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Compartments</dt>
+                        <dd className="font-body text-gray-900">Main compartment (spacious enough for essentials), internal zipper pocket, slip pocket for phone/cards</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Shoulder Drop</dt>
+                        <dd className="font-body text-gray-900">26 cm (adjustable strap included)</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Capacity</dt>
+                        <dd className="font-body text-gray-900">Approx. 4–5 Liters – perfect for essentials like wallet, phone, sunglasses, and small accessories</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Ideal For</dt>
+                        <dd className="font-body text-gray-900">Evening outings, brunch, parties, and as a chic companion to formal or festive wear</dd>
+                      </div>
+                    </>
+                  )}
+                  {product.name === 'VISTAPACK' && (
+                    <>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Closure Type</dt>
+                        <dd className="font-body text-gray-900">Main top zipper closure, Front Flap Pocket: Envelope-style pocket for quick essentials</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Compartments</dt>
+                        <dd className="font-body text-gray-900">1 padded compartment (fits iPad / small tablet, up to 11"), 1 zipper pocket, 2 slip pockets (cards, phone, keys)</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Shoulder Drop</dt>
+                        <dd className="font-body text-gray-900">Adjustable 90 – 130 cm (so it works for both shoulder carry and crossbody)</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Capacity</dt>
+                        <dd className="font-body text-gray-900">Approx. 10–12 Liters</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Ideal For</dt>
+                        <dd className="font-body text-gray-900">College, casual workdays, city travel, and leisure outings</dd>
+                      </div>
+                    </>
+                  )}
+                  {product.name === 'SANDESH LAPTOP BAG' && (
+                    <>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Closure Type</dt>
+                        <dd className="font-body text-gray-900">Magnetic Flap with concealed zipper for secure storage</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Compartments</dt>
+                        <dd className="font-body text-gray-900">One main padded compartment (fits 14"–15.6" laptop), One front envelope-style pocket for documents/tablet, Internal zipper pocket + slip pockets for phone & cards</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Shoulder Drop</dt>
+                        <dd className="font-body text-gray-900">Detachable long strap (adjustable 50–60 cm) + top handle (8–10 cm drop)</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Capacity</dt>
+                        <dd className="font-body text-gray-900">Approx. 12–14 Liters – fits laptop, diary, charger, wallet, phone, and daily essentials</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Ideal For</dt>
+                        <dd className="font-body text-gray-900">Professionals, students, and style-conscious users who want a luxury laptop bag with a bold geometric identity</dd>
+                      </div>
+                    </>
+                  )}
+                  {(product.name === 'Lekha Wallet' && product.category?.name === 'Clutch') && (
+                    <>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Closure Type</dt>
+                        <dd className="font-body text-gray-900">Zip-Around Closure with envelope-style panel design</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Compartments</dt>
+                        <dd className="font-body text-gray-900">2 main cash compartments, 1 center zipper pocket for coins, 6–8 card slots, 2 slip pockets for bills/receipts</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Shoulder Drop</dt>
+                        <dd className="font-body text-gray-900">26 cm (adjustable strap included)</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Capacity</dt>
+                        <dd className="font-body text-gray-900">Designed to hold cash, coins, cards, and small essentials (Approx. 1.5–2 Liters)</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Ideal For</dt>
+                        <dd className="font-body text-gray-900">Everyday use, evening outings, and as a stylish companion for both casual and professional looks</dd>
+                      </div>
+                    </>
+                  )}
+                  {(product.name === 'Lekha Wallet' && product.category?.name === 'Wallet') && (
+                    <>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Closure Type</dt>
+                        <dd className="font-body text-gray-900">Zip-Around Closure with envelope-style panel design</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Compartments</dt>
+                        <dd className="font-body text-gray-900">2 main cash compartments, 1 center zipper pocket for coins, 6–8 card slots, 2 slip pockets for bills/receipts</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Shoulder Drop</dt>
+                        <dd className="font-body text-gray-900">26 cm (adjustable strap included)</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Capacity</dt>
+                        <dd className="font-body text-gray-900">Designed to hold cash, coins, cards, and small essentials (Approx. 1.5–2 Liters)</dd>
+                      </div>
+                      <div>
+                        <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">Ideal For</dt>
+                        <dd className="font-body text-gray-900">Everyday use, evening outings, and as a stylish companion for both casual and professional looks</dd>
+                      </div>
+                    </>
+                  )}
+                  <div>
+                    <dt className="font-menu text-sm text-gray-600 uppercase tracking-wide mb-2">SKU</dt>
+                    <dd className="font-body text-gray-900">{selectedVariant?.sku || 'N/A'}</dd>
+                  </div>
+                </dl>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
