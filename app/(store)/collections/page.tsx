@@ -5,7 +5,7 @@ import { Breadcrumbs } from '@/components/store/Breadcrumbs'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
-import { ShoppingBag, Package, Sparkles, TrendingUp } from 'lucide-react'
+import { ShoppingBag } from 'lucide-react'
 import { Metadata } from 'next'
 import { Category } from '@/types'
 import { Button } from '@/components/ui/button'
@@ -47,19 +47,6 @@ export default async function CollectionsPage() {
     .order('order', { ascending: true })
 
   const displayCategories: Category[] = categories || []
-
-  // Get total products count
-  const { count: totalProductsCount } = await supabase
-    .from('products')
-    .select('*', { count: 'exact', head: true })
-    .eq('is_active', true)
-
-  // Get featured products count
-  const { count: featuredCount } = await supabase
-    .from('products')
-    .select('*', { count: 'exact', head: true })
-    .eq('is_active', true)
-    .eq('is_featured', true)
 
   // Get product counts per category
   const categoryProductCounts: Record<string, number> = {}
@@ -112,36 +99,6 @@ export default async function CollectionsPage() {
       <StoreHeader />
       <main className="flex-1 bg-white">
         
-        {/* Stats Bar - Only show if no banner */}
-        {!banner && (
-          <section className="bg-gradient-to-r from-gray-50 to-gray-100 border-b">
-            <div className="container px-4 py-6">
-              <div className="grid grid-cols-3 gap-4 max-w-3xl mx-auto">
-                <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 mb-2">
-                    <Package className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900">{displayCategories.length}</p>
-                  <p className="text-xs text-gray-600">Collections</p>
-                </div>
-                <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-purple-100 mb-2">
-                    <Sparkles className="h-5 w-5 text-purple-600" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900">{totalProductsCount || 0}</p>
-                  <p className="text-xs text-gray-600">Products</p>
-                </div>
-                <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-green-100 mb-2">
-                    <TrendingUp className="h-5 w-5 text-green-600" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900">{featuredCount || 0}</p>
-                  <p className="text-xs text-gray-600">Featured</p>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
         {/* Hero Section with Small Banner */}
         {banner && (banner.image_url || banner.video_url) && (
           <section className="relative w-full h-[40vh] min-h-[300px] max-h-[400px] overflow-hidden bg-black">
