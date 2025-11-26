@@ -26,26 +26,33 @@ interface CollectionPageProps {
 export async function generateMetadata({ params }: CollectionPageProps): Promise<Metadata> {
   const supabase = await createClient()
   
-  // Try by slug first
+  // Try to find category with same logic as main page
+  const normalizedSlug = params.slug.toLowerCase().trim()
   let category = null
+  
   const { data: categoryBySlug } = await supabase
     .from('categories')
     .select('name, description')
     .eq('slug', params.slug)
-    .single()
+    .eq('is_active', true)
+    .maybeSingle()
 
   if (categoryBySlug) {
     category = categoryBySlug
   } else {
-    // Try by ID
-    const { data: categoryById } = await supabase
+    const { data: allCategories } = await supabase
       .from('categories')
       .select('name, description')
-      .eq('id', params.slug)
-      .single()
+      .eq('is_active', true)
     
-    if (categoryById) {
-      category = categoryById
+    if (allCategories) {
+      const matched = allCategories.find(
+        cat => cat.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') === normalizedSlug
+      ) || allCategories.find(cat => cat.name?.toLowerCase().includes(normalizedSlug))
+      
+      if (matched) {
+        category = matched
+      }
     }
   }
 
@@ -61,33 +68,63 @@ export default async function CollectionPage({ params, searchParams }: Collectio
   const limit = 24
   const offset = (page - 1) * limit
 
-  // Fetch category - try by slug first, then by ID
+  // Fetch category - try multiple methods
   let category = null
   
-  // First try by slug
+  // Normalize the slug for matching
+  const normalizedSlug = params.slug.toLowerCase().trim()
+  
+  // Method 1: Try exact slug match
   const { data: categoryBySlug } = await supabase
     .from('categories')
     .select('*')
     .eq('slug', params.slug)
-    .single()
+    .eq('is_active', true)
+    .maybeSingle()
 
   if (categoryBySlug) {
     category = categoryBySlug
   } else {
-    // If not found by slug, try by ID
-    const { data: categoryById } = await supabase
+    // Method 2: Try case-insensitive slug match
+    const { data: allCategories } = await supabase
       .from('categories')
       .select('*')
-      .eq('id', params.slug)
-      .single()
+      .eq('is_active', true)
     
-    if (categoryById) {
-      category = categoryById
+    if (allCategories) {
+      const matchedCategory = allCategories.find(
+        cat => cat.slug?.toLowerCase() === normalizedSlug
+      )
+      if (matchedCategory) {
+        category = matchedCategory
+      } else {
+        // Method 3: Try matching by name (normalized)
+        const matchedByName = allCategories.find(cat => {
+          const normalizedName = cat.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+          return normalizedName === normalizedSlug || normalizedName?.includes(normalizedSlug) || normalizedSlug.includes(normalizedName)
+        })
+        if (matchedByName) {
+          category = matchedByName
+        } else {
+          // Method 4: Try by ID
+          const { data: categoryById } = await supabase
+            .from('categories')
+            .select('*')
+            .eq('id', params.slug)
+            .eq('is_active', true)
+            .maybeSingle()
+          
+          if (categoryById) {
+            category = categoryById
+          }
+        }
+      }
     }
   }
 
-  if (!category || !category.is_active) {
+  if (!category) {
     console.error(`Category not found with slug/id: ${params.slug}`)
+    console.error('Tried methods: exact slug, case-insensitive slug, name matching, ID matching')
     notFound()
   }
 
