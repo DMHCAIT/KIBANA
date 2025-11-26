@@ -52,7 +52,34 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
 
             {/* Horizontal Scroll for Mobile/Tablet */}
             <div className="lg:hidden">
-              <div className="overflow-x-auto scrollbar-hide pb-4 -mx-4 px-4 scroll-smooth" style={{ WebkitOverflowScrolling: 'touch' }}>
+              <div 
+                className="overflow-x-auto scrollbar-hide pb-4 -mx-4 px-4 scroll-smooth touch-pan-x"
+                style={{ 
+                  WebkitOverflowScrolling: 'touch',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                }}
+                onTouchStart={(e) => {
+                  const container = e.currentTarget
+                  const touch = e.touches[0]
+                  const startX = touch.clientX
+                  const startScrollLeft = container.scrollLeft
+                  
+                  const handleTouchMove = (e: TouchEvent) => {
+                    const touch = e.touches[0]
+                    const diffX = startX - touch.clientX
+                    container.scrollLeft = startScrollLeft + diffX
+                  }
+                  
+                  const handleTouchEnd = () => {
+                    document.removeEventListener('touchmove', handleTouchMove)
+                    document.removeEventListener('touchend', handleTouchEnd)
+                  }
+                  
+                  document.addEventListener('touchmove', handleTouchMove, { passive: false })
+                  document.addEventListener('touchend', handleTouchEnd)
+                }}
+              >
                 <div className="flex gap-6 min-w-max">
                   {displayProducts.map((product) => (
                     <div key={product.id} className="w-[280px] sm:w-[320px] shrink-0">

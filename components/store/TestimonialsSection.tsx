@@ -78,25 +78,27 @@ export function TestimonialsSection() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-16 bg-white border-t border-gray-100">
-      <div className="container px-4">
+    <section ref={sectionRef} className="w-full bg-white section-luxury border-t border-gray-100">
+      <div className="container px-4 sm:px-6 lg:px-8 mx-auto py-16 md:py-20 lg:py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-12"
+          className="mb-12 md:mb-16 lg:mb-20 text-center max-w-3xl mx-auto"
         >
-          <div className="inline-block mb-3 px-3 py-1 bg-black text-white text-xs font-medium tracking-wider uppercase rounded-full">
+          <div className="inline-block mb-4 px-4 py-1.5 bg-black text-white text-xs font-medium tracking-wider uppercase rounded-full">
             <span>Testimonials</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900">What Our Customers Say</h2>
-          <p className="text-base text-gray-600 max-w-2xl">
+          <h2 className="font-hero text-4xl md:text-5xl lg:text-6xl mb-6 md:mb-8 text-gray-900 leading-tight tracking-tight">
+            What Our Customers Say
+          </h2>
+          <p className="font-body text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
             Join thousands of satisfied customers who trust KIBANA for their luxury handbag needs
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 max-w-7xl mx-auto">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.id}

@@ -133,10 +133,32 @@ export function FeaturedCategories({ categories }: FeaturedCategoriesProps) {
           {/* Horizontal Scroll Container for Mobile/Tablet */}
         <div
           ref={scrollRef}
-            className="flex lg:hidden gap-6 overflow-x-auto scrollbar-hide pb-4 scroll-smooth -mx-4 px-4"
+            className="flex lg:hidden gap-6 overflow-x-auto scrollbar-hide pb-4 scroll-smooth -mx-4 px-4 touch-pan-x"
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
+            WebkitOverflowScrolling: 'touch',
+          }}
+          onTouchStart={(e) => {
+            const touch = e.touches[0]
+            const startX = touch.clientX
+            const startScrollLeft = scrollRef.current?.scrollLeft || 0
+            
+            const handleTouchMove = (e: TouchEvent) => {
+              const touch = e.touches[0]
+              const diffX = startX - touch.clientX
+              if (scrollRef.current) {
+                scrollRef.current.scrollLeft = startScrollLeft + diffX
+              }
+            }
+            
+            const handleTouchEnd = () => {
+              document.removeEventListener('touchmove', handleTouchMove)
+              document.removeEventListener('touchend', handleTouchEnd)
+            }
+            
+            document.addEventListener('touchmove', handleTouchMove, { passive: false })
+            document.addEventListener('touchend', handleTouchEnd)
           }}
         >
           {displayCategories.map((category, index) => (
@@ -144,7 +166,7 @@ export function FeaturedCategories({ categories }: FeaturedCategoriesProps) {
               key={category.id || index}
                 className="shrink-0 w-[280px] sm:w-[320px]"
             >
-              <Link href={`/categories/${category.slug || category.id}`}>
+              <Link href={`/collections/${category.slug || category.id}`}>
                   <Card className="group overflow-hidden cursor-pointer border-luxury border-gray-200 hover:border-gray-400 transition-all duration-300 bg-white h-full">
                     <div className="relative h-64 overflow-hidden bg-gray-50">
                     {category.banner_image ? (

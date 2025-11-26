@@ -214,10 +214,16 @@ export function ProductsTable({ products }: ProductsTableProps) {
                                 <Eye className="h-4 w-4" />
                               </Link>
                             </Button>
-                            <Button variant="ghost" size="icon" className="hover:bg-purple-50 hover:text-purple-600 rounded-lg" asChild>
-                              <Link href={`/admin/products/${product.slug || product.id}/edit`}>
-                                <Edit className="h-4 w-4" />
-                              </Link>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="hover:bg-purple-50 hover:text-purple-600 rounded-lg" 
+                              onClick={() => {
+                                const slug = product.slug || product.id
+                                router.push(`/admin/products/${slug}/edit`)
+                              }}
+                            >
+                              <Edit className="h-4 w-4" />
                             </Button>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>

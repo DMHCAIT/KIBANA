@@ -54,9 +54,9 @@ export function StorySection() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-16 bg-gray-50 border-y border-gray-200">
-      <div className="container px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+    <section ref={sectionRef} className="w-full bg-white section-luxury border-y border-gray-100">
+      <div className="container px-4 sm:px-6 lg:px-8 mx-auto py-16 md:py-20 lg:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-7xl mx-auto">
           <motion.div
             ref={imageRef}
             initial={{ opacity: 0, scale: 0.9 }}
