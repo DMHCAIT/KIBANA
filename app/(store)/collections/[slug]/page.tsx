@@ -138,7 +138,37 @@ export default async function CollectionPage({ params, searchParams }: Collectio
       variants:product_variants(*)
     `, { count: 'exact' })
     .eq('is_active', true)
-    .eq('category_id', category.id)
+  
+  // Only filter by category_id if we have a valid category
+  if (category?.id) {
+    query = query.eq('category_id', category.id)
+  } else {
+    // If category not found, try to find products by category name match
+    const { data: allCategories } = await supabase
+      .from('categories')
+      .select('id, name')
+      .eq('is_active', true)
+    
+    if (allCategories) {
+      const matchedCategory = allCategories.find(cat => {
+        const normalizedName = cat.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+        return normalizedName === normalizedSlug || normalizedName?.includes(normalizedSlug)
+      })
+      
+      if (matchedCategory) {
+        query = query.eq('category_id', matchedCategory.id)
+        // Update category object
+        const { data: fullCategory } = await supabase
+          .from('categories')
+          .select('*')
+          .eq('id', matchedCategory.id)
+          .single()
+        if (fullCategory) {
+          category = fullCategory
+        }
+      }
+    }
+  }
 
   // Sort
   switch (searchParams.sort) {
