@@ -1,0 +1,87 @@
+{
+  "products": [
+    {
+      "name": "VISTAPACK",
+      "slug": "vistapack",
+      "brand": "KIBANA",
+      "description": "VISTAPACK – Where Structure Meets Style\n\nStep into a world of effortless charm with the VISTAPACK, a modern emblem of strength, style, and versatility. Defined by its bold chevron-inspired stitching and structured leather silhouette, this backpack whispers stories of movement, freedom, and self-expression.\n\nDesigned to carry both your essentials and your spirit with ease, it is more than just a bag—it is a companion for journeys, both near and far. Its ergonomic straps embrace you in comfort, while the compact yet functional interior ensures your belongings stay organized wherever life takes you.\n\nJust as horizons open up with every step forward, the VISTAPACK symbolizes exploration and resilience, making it a timeless gesture of empowerment and elegance for the modern soul.\n\nKEY FEATURES:\n• Bold chevron-inspired stitching\n• Structured leather silhouette\n• Ergonomic straps for comfort\n• Main top zipper closure\n• Envelope-style front flap pocket for quick essentials\n• Padded compartment (fits iPad/small tablet, up to 11\")\n• 1 zipper pocket\n• 2 slip pockets (cards, phone, keys)\n• Gold-tone hardware accents\n• Adjustable straps (90-130 cm)\n• Works for shoulder carry and crossbody\n• 10-12 liter capacity\n• Height: 28 cm\n• Perfect for college, casual workdays, city travel, and leisure outings",
+      "short_description": "Where Structure Meets Style. Urban carry backpack with bold chevron stitching, padded tablet compartment, and ergonomic design. Perfect for journeys near and far.",
+      "price": 4499,
+      "category": "Backpack",
+      "is_featured": true,
+      "stock_status": "in_stock",
+      "seo_title": "VISTAPACK - Urban Carry Backpack with Chevron Design | KIBANA",
+      "seo_description": "Shop VISTAPACK featuring bold chevron stitching, structured design, and premium PU leather. Padded tablet compartment. Available in 4 colors. Perfect for college and city travel.",
+      "specifications": {
+        "dimensions": {
+          "height": "28 cm",
+          "capacity": "10-12 Liters"
+        },
+        "material": "100% PU Leather",
+        "texture": "Smooth, Fine-Grained",
+        "hardware": "Gold-Tone Accents",
+        "closure": "Main top zipper closure, Envelope-style front flap pocket",
+        "compartments": "1 padded compartment (fits iPad/small tablet up to 11\"), 1 zipper pocket, 2 slip pockets (cards, phone, keys)",
+        "shoulderDrop": "Adjustable 90 – 130 cm (works for both shoulder carry and crossbody)",
+        "capacity": "10–12 Liters",
+        "idealFor": "College, casual workdays, city travel, and leisure outings",
+        "features": [
+          "Bold chevron-inspired stitching",
+          "Structured leather silhouette",
+          "Ergonomic straps",
+          "100% PU Leather",
+          "Smooth fine-grained texture",
+          "Gold-tone accents",
+          "Main top zipper closure",
+          "Envelope-style front flap pocket",
+          "Padded compartment for iPad/tablet (up to 11\")",
+          "Zipper pocket for valuables",
+          "2 slip pockets for cards, phone, keys",
+          "Adjustable straps (90-130 cm)",
+          "Shoulder carry or crossbody",
+          "Compact 10-12 liter capacity",
+          "Height: 28 cm",
+          "Perfect for journeys and daily use"
+        ]
+      },
+      "variants": [
+        {
+          "color": "Teal Blue",
+          "sku": "VISTAPACK-TEAL-001",
+          "price": 4499,
+          "stock_quantity": 20,
+          "is_active": true,
+          "image_filename": "vistapack-dark-green.png",
+          "alt_text": "VISTAPACK in Teal Blue - Bold chevron urban backpack"
+        },
+        {
+          "color": "Mint Green",
+          "sku": "VISTAPACK-GREEN-001",
+          "price": 4499,
+          "stock_quantity": 20,
+          "is_active": true,
+          "image_filename": "vistapack-green.png",
+          "alt_text": "VISTAPACK in Mint Green - Pastel green structured backpack"
+        },
+        {
+          "color": "Mocha Tan",
+          "sku": "VISTAPACK-TAN-001",
+          "price": 4499,
+          "stock_quantity": 20,
+          "is_active": true,
+          "image_filename": "vistapack-brown.png",
+          "alt_text": "VISTAPACK in Mocha Tan - Brown elegant backpack"
+        },
+        {
+          "color": "Milky Blue",
+          "sku": "VISTAPACK-BLUE-001",
+          "price": 4499,
+          "stock_quantity": 20,
+          "is_active": true,
+          "image_filename": "vistapack-blue.png",
+          "alt_text": "VISTAPACK in Milky Blue - Light blue modern backpack"
+        }
+      ]
+    }
+  ]
+}
