@@ -1,0 +1,85 @@
+{
+  "products": [
+    {
+      "name": "VISTARA TOTE",
+      "slug": "vistara-tote",
+      "brand": "KIBANA",
+      "description": "VISTARA (means \"expanse\", also hints at the V-shape)\n\nYouth-Trendy Brand Style (Bold, Catchy, Fashionable)\n\nVISTARA – Bold. Stylish. Limitless. With its striking V-shape pattern and chic structured body, Vistara brings a fresh vibe to everyday fashion. A bag that's as versatile as you are — from work to weekends, it's your go-to trendsetter. Carry Vistara and own the expanse of possibilities in style.\n\nDesigned for the modern woman who values elegance and confidence, it balances sophistication with everyday functionality — a true luxury statement.\n\nFeatures:\n• Bold V-stitching pattern\n• Structured shape with elegant design\n• 100% PU Leather construction\n• Smooth, fine-grained texture\n• Gold-tone hardware accents\n• Magnetic flap with concealed zipper top\n• Padded laptop sleeve (fits 14-15 inch)\n• Inner zip pocket for valuables\n• Multiple organizer slip pockets\n• Detachable adjustable long strap (50-60 cm)\n• Top handle with 8-10 cm drop\n• Spacious 14-16 liter capacity\n• Height: 28 cm\n• Perfect for office, meetings, and day-to-evening transitions",
+      "short_description": "Bold. Stylish. Limitless. A youth-trendy tote with striking V-shape pattern, structured design, and premium PU leather. Perfect power tote for modern women.",
+      "price": 4999,
+      "category": "Tote Bag",
+      "is_featured": true,
+      "stock_status": "in_stock",
+      "seo_title": "VISTARA TOTE - Bold V-Shape Designer Tote Bag | KIBANA",
+      "seo_description": "Shop VISTARA TOTE featuring bold V-stitching, structured design, and premium PU leather. Available in 4 stunning colors. Perfect for office and day-to-evening use. 14-16L capacity.",
+      "specifications": {
+        "dimensions": {
+          "height": "28 cm",
+          "capacity": "14-16 Liters"
+        },
+        "material": "100% PU Leather",
+        "texture": "Smooth, Fine-Grained",
+        "hardware": "Gold-Tone Accents",
+        "closure": "Magnetic Flap with concealed zipper top",
+        "compartments": "One Main Compartment, Flap/Top Zipper, Padded laptop sleeve, Inner zip pocket, Organizer slip pockets",
+        "shoulderDrop": "Detachable long strap (adjustable 50–60 cm) + top handle (8–10 cm drop)",
+        "capacity": "14–16 Liters",
+        "idealFor": "Office, meetings, and day-to-evening transitions",
+        "features": [
+          "V-stitching pattern",
+          "Structured shape",
+          "Elegant design",
+          "100% PU Leather",
+          "Smooth fine-grained texture",
+          "Gold-tone hardware",
+          "Magnetic flap closure",
+          "Concealed zipper top",
+          "Padded laptop sleeve",
+          "Inner zip pocket",
+          "Organizer slip pockets",
+          "Detachable adjustable strap",
+          "Top handle included",
+          "Fits laptop, diary, wallet, makeup pouch, charger, and daily essentials"
+        ]
+      },
+      "variants": [
+        {
+          "color": "Teal Blue",
+          "sku": "VISTARA-TEAL-001",
+          "price": 4999,
+          "stock_quantity": 20,
+          "is_active": true,
+          "image_filename": "vistara-tote-teal-blue.png",
+          "alt_text": "VISTARA TOTE in Teal Blue - Bold V-stitching pattern tote bag"
+        },
+        {
+          "color": "Mint Green",
+          "sku": "VISTARA-GREEN-001",
+          "price": 4999,
+          "stock_quantity": 20,
+          "is_active": true,
+          "image_filename": "vistara-tote-pastel-green.png",
+          "alt_text": "VISTARA TOTE in Mint Green - Pastel green structured tote bag"
+        },
+        {
+          "color": "Mocha Tan",
+          "sku": "VISTARA-TAN-001",
+          "price": 4999,
+          "stock_quantity": 20,
+          "is_active": true,
+          "image_filename": "vistara-tote-brown.png",
+          "alt_text": "VISTARA TOTE in Mocha Tan - Brown elegant tote bag"
+        },
+        {
+          "color": "Milky Blue",
+          "sku": "VISTARA-BLUE-001",
+          "price": 4999,
+          "stock_quantity": 20,
+          "is_active": true,
+          "image_filename": "vistara-tote-milky-blue.png",
+          "alt_text": "VISTARA TOTE in Milky Blue - Light blue sophisticated tote bag"
+        }
+      ]
+    }
+  ]
+}
