@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Plus, Package } from 'lucide-react'
 import Link from 'next/link'
 import { ProductsTable } from '@/components/admin/ProductsTable'
+import { ImportProductsButton } from '@/components/admin/ImportProductsButton'
 import { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
@@ -42,12 +43,15 @@ export default async function AdminProductsPage() {
               <p className="text-muted-foreground mt-1">Manage your product catalog</p>
             </div>
           </div>
-          <Button asChild className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all">
-            <Link href="/admin/products/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Product
-            </Link>
-          </Button>
+          <div className="flex gap-3">
+            <ImportProductsButton />
+            <Button asChild className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all">
+              <Link href="/admin/products/new">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Product
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
 
