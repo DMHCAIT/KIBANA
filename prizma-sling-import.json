@@ -1,0 +1,85 @@
+{
+  "products": [
+    {
+      "name": "PRIZMA SLING",
+      "slug": "prizma-sling",
+      "brand": "KIBANA",
+      "description": "PRIZMA – Luxury–Chic Sling\n\nInspired by the brilliance of a prism, this bag reflects bold geometry and refined craftsmanship. The striking geometric cuts and golden clasp create a statement, blending modern artistry with timeless elegance.\n\nPRIZMA is designed for women who shine in every dimension — sophisticated, confident, and effortlessly stylish.\n\nBold. Modern. Unstoppable.\n\nWith its striking geometric cuts and chic golden hardware, PRIZMA redefines street-smart luxury. A bag that pairs perfectly with work looks or weekend vibes, it's built for the confident woman who loves to stand out.\n\nPRIZMA is sophistication made effortless. Carry Prizma and shine at every angle.\n\nKEY FEATURES:\n• Bold geometric cuts for modern artistry\n• Square metallic push-lock with gold finish\n• 100% PU Leather construction\n• Smooth, fine-grained texture\n• Gold-tone hardware accents\n• Main compartment for essentials\n• Internal zipper pocket for valuables\n• Slip pocket for phone/cards\n• Adjustable shoulder strap (26 cm drop)\n• Compact 4-5 liter capacity\n• Perfect for evening outings, brunch, parties\n• Ideal companion for formal or festive wear",
+      "short_description": "Bold. Modern. Unstoppable. Luxury-chic sling with striking geometric cuts, gold hardware, and refined craftsmanship. Perfect for the confident woman.",
+      "price": 3999,
+      "category": "Sling Bag",
+      "is_featured": true,
+      "stock_status": "in_stock",
+      "seo_title": "PRIZMA SLING - Luxury Geometric Sling Bag | KIBANA",
+      "seo_description": "Shop PRIZMA SLING featuring bold geometric design, gold hardware, and premium PU leather. Available in 4 stunning colors. Perfect for evening outings and parties. 4-5L capacity.",
+      "specifications": {
+        "dimensions": {
+          "shoulderDrop": "26 cm",
+          "capacity": "4-5 Liters"
+        },
+        "material": "100% PU Leather",
+        "texture": "Smooth, Fine-Grained",
+        "hardware": "Gold-Tone Accents",
+        "closure": "Square metallic push-lock (gold finish)",
+        "compartments": "Main compartment, Internal zipper pocket, Slip pocket for phone/cards",
+        "shoulderDrop": "26 cm (adjustable strap included)",
+        "capacity": "4–5 Liters",
+        "idealFor": "Evening outings, brunch, parties, and as a chic companion to formal or festive wear",
+        "features": [
+          "Bold geometric cuts",
+          "Modern artistry design",
+          "Square metallic push-lock",
+          "Gold finish hardware",
+          "100% PU Leather",
+          "Smooth fine-grained texture",
+          "Gold-tone accents",
+          "Main compartment for essentials",
+          "Internal zipper pocket",
+          "Slip pocket for phone/cards",
+          "Adjustable shoulder strap",
+          "26 cm shoulder drop",
+          "Compact 4-5 liter capacity",
+          "Perfect for wallet, phone, sunglasses, small accessories"
+        ]
+      },
+      "variants": [
+        {
+          "color": "Teal Blue",
+          "sku": "PRIZMA-TEAL-001",
+          "price": 3999,
+          "stock_quantity": 20,
+          "is_active": true,
+          "image_filename": "prizma-sling-dark-green.png",
+          "alt_text": "PRIZMA SLING in Teal Blue - Bold geometric luxury sling bag"
+        },
+        {
+          "color": "Mint Green",
+          "sku": "PRIZMA-GREEN-001",
+          "price": 3999,
+          "stock_quantity": 20,
+          "is_active": true,
+          "image_filename": "prizma-sling-pastel-green.png",
+          "alt_text": "PRIZMA SLING in Mint Green - Pastel green chic sling bag"
+        },
+        {
+          "color": "Mocha Tan",
+          "sku": "PRIZMA-TAN-001",
+          "price": 3999,
+          "stock_quantity": 20,
+          "is_active": true,
+          "image_filename": "prizma-sling-brown.png",
+          "alt_text": "PRIZMA SLING in Mocha Tan - Brown elegant sling bag"
+        },
+        {
+          "color": "Milky Blue",
+          "sku": "PRIZMA-BLUE-001",
+          "price": 3999,
+          "stock_quantity": 20,
+          "is_active": true,
+          "image_filename": "prizma-sling-milky-blue.png",
+          "alt_text": "PRIZMA SLING in Milky Blue - Light blue sophisticated sling bag"
+        }
+      ]
+    }
+  ]
+}
