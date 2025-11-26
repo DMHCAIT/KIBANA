@@ -2,6 +2,7 @@
 
 import { Product } from '@/types'
 import { ProductCard } from './ProductCard'
+import { ProductVariantCard } from './ProductVariantCard'
 import { ProductListItem } from './ProductListItem'
 import { Button } from '@/components/ui/button'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -114,16 +115,31 @@ export function ProductGrid({
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {products.map((product, index) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.05 }}
-            >
-              <ProductCard product={product} />
-            </motion.div>
-          ))}
+          {products.map((product, index) => {
+            // Check if this is a variant card (expanded from color variants)
+            const isVariantCard = (product as any)._isVariantCard
+            const displayVariant = (product as any)._displayVariant
+            const displayVariantImage = (product as any)._displayVariantImage
+            
+            return (
+              <motion.div
+                key={isVariantCard ? `${product.id}-${displayVariant?.id}` : product.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+              >
+                {isVariantCard ? (
+                  <ProductVariantCard 
+                    product={product} 
+                    variant={displayVariant}
+                    variantImage={displayVariantImage}
+                  />
+                ) : (
+                  <ProductCard product={product} />
+                )}
+              </motion.div>
+            )
+          })}
         </div>
       )}
 

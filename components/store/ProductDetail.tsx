@@ -300,46 +300,65 @@ export function ProductDetail({ product }: ProductDetailProps) {
           {/* Variants */}
           {colors.length > 0 && (
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold">Color</h3>
-                <span className="text-sm text-muted-foreground">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-lg">Available Colors</h3>
+                <span className="text-sm text-muted-foreground font-medium">
                   {selectedVariant?.color || 'Select a color'}
                 </span>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-3">
                 {colors.map((color) => {
                   const variant = product.variants?.find(v => v.color === color)
                   const variantImage = variant 
                     ? images.find(img => img.variant_id === variant.id)
                     : null
+                  const isAvailable = variant?.stock_quantity ? variant.stock_quantity > 0 : false
                   
                   return (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedVariant(variant || null)}
-                      className={`relative w-16 h-16 rounded-lg border-2 transition-all overflow-hidden ${
-                        selectedVariant?.color === color
-                          ? 'border-primary ring-2 ring-primary/20 scale-110'
-                          : 'border hover:border-primary/50'
-                      }`}
-                      title={color || undefined}
-                    >
-                      {variantImage ? (
-                        <Image
-                          src={variantImage.image_url}
-                          alt={color || 'Product color'}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gray-200" />
-                      )}
-                      {selectedVariant?.color === color && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                          <Check className="h-5 w-5 text-white" />
-                        </div>
-                      )}
-                    </button>
+                    <div key={color} className="flex flex-col items-center">
+                      <button
+                        onClick={() => setSelectedVariant(variant || null)}
+                        disabled={!isAvailable}
+                        className={`relative w-20 h-20 rounded-xl border-2 transition-all overflow-hidden ${
+                          selectedVariant?.color === color
+                            ? 'border-primary ring-4 ring-primary/20 scale-105 shadow-lg'
+                            : isAvailable
+                            ? 'border-gray-300 hover:border-primary/50 hover:scale-105 shadow-sm'
+                            : 'border-gray-200 opacity-50 cursor-not-allowed'
+                        }`}
+                        title={`${color}${!isAvailable ? ' (Out of Stock)' : ''}`}
+                      >
+                        {variantImage ? (
+                          <Image
+                            src={variantImage.image_url}
+                            alt={color || 'Product color'}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                            <span className="text-xs text-gray-400">{color?.charAt(0)}</span>
+                          </div>
+                        )}
+                        {selectedVariant?.color === color && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                            <div className="bg-white rounded-full p-1">
+                              <Check className="h-4 w-4 text-primary" />
+                            </div>
+                          </div>
+                        )}
+                        {!isAvailable && (
+                          <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
+                            <span className="text-xs font-bold text-red-600 rotate-[-15deg]">OUT</span>
+                          </div>
+                        )}
+                      </button>
+                      <span className={`text-xs mt-1.5 font-medium text-center ${
+                        selectedVariant?.color === color ? 'text-primary' : 'text-gray-600'
+                      }`}>
+                        {color}
+                      </span>
+                    </div>
                   )
                 })}
               </div>
