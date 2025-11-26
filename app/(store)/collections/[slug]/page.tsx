@@ -208,13 +208,20 @@ export default async function CollectionPage({ params, searchParams }: Collectio
     .order('order', { ascending: true })
 
   // Fetch unique brands
-  const { data: brandsData } = await supabase
-    .from('products')
-    .select('brand')
-    .eq('is_active', true)
-    .eq('category_id', category.id)
+  let brands: string[] = []
   
-  const brands = Array.from(new Set(brandsData?.map((p: { brand: string }) => p.brand).filter(Boolean))) as string[]
+  if (category?.id) {
+    const { data: brandsData } = await supabase
+      .from('products')
+      .select('brand')
+      .eq('is_active', true)
+      .eq('category_id', category.id)
+    
+    brands = Array.from(new Set(brandsData?.map((p: { brand: string }) => p.brand).filter(Boolean))) as string[]
+  } else if (products && products.length > 0) {
+    // Extract brands from products if category not found
+    brands = Array.from(new Set(products.map((p: any) => p.brand).filter(Boolean))) as string[]
+  }
 
   // Get category image for hero
   const getCategoryImage = (categoryName: string, bannerImage?: string | null): string => {
