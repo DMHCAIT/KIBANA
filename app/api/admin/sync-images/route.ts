@@ -60,33 +60,34 @@ export async function POST(request: NextRequest) {
     // First, list all folders in the root of product-images bucket
     // Try empty string first (root level)
     let rootFolders: any[] = []
-    const { data: rootFoldersData, error: rootError } = await supabase.storage
-      .from('product-images')
-      .list('', {
-        limit: 1000,
-        offset: 0,
-      })
+    let rootError: any = null
+    
+    // Try multiple methods to list root folders
+    const methods = [
+      () => supabase.storage.from('product-images').list('', { limit: 1000, offset: 0 }),
+      () => supabase.storage.from('product-images').list(undefined, { limit: 1000, offset: 0 }),
+      () => supabase.storage.from('product-images').list(null as any, { limit: 1000, offset: 0 }),
+    ]
 
-    if (!rootError && rootFoldersData) {
-      rootFolders = rootFoldersData.filter(item => item.id) // Only folders/files with IDs
-    }
-
-    // Also try listing with no path parameter (some Supabase versions need this)
-    if (rootFolders.length === 0) {
+    for (const method of methods) {
       try {
-        const { data: altRootFolders } = await supabase.storage
-          .from('product-images')
-          .list(undefined, {
-            limit: 1000,
-            offset: 0,
-          })
-        if (altRootFolders) {
-          rootFolders = altRootFolders.filter(item => item.id)
+        const { data, error } = await method()
+        if (!error && data && data.length > 0) {
+          rootFolders = data.filter(item => item.id) // Only folders/files with IDs
+          if (rootFolders.length > 0) {
+            console.log(`✅ Found ${rootFolders.length} items using method:`, method.toString().substring(0, 50))
+            break
+          }
+        } else if (error) {
+          rootError = error
         }
-      } catch (e) {
-        console.warn('Alternative list method failed:', e)
+      } catch (e: any) {
+        console.warn('List method failed:', e.message)
       }
     }
+
+    // Log what we found
+    console.log(`Found ${rootFolders.length} root folders:`, rootFolders.map(f => f.name || f.id))
 
     const results: any[] = []
     const debugInfo: any[] = []
