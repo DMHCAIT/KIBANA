@@ -32,9 +32,18 @@ export function SyncImagesButton() {
         throw new Error(result.error || 'Failed to sync images')
       }
 
-      toast.success(
-        `Successfully synced images! Added ${result.totalAdded} new images, ${result.totalExists} already existed.`
-      )
+      const message = `Successfully synced images! Added ${result.totalAdded} new images, ${result.totalExists} already existed.`
+      const notFound = result.totalNotFound || 0
+      if (notFound > 0) {
+        toast.warning(`${message} ${notFound} products had no matching folders.`)
+      } else {
+        toast.success(message)
+      }
+      
+      // Log debug info if available
+      if (result.debugInfo && result.debugInfo.length > 0) {
+        console.log('Sync debug info:', result.debugInfo)
+      }
       router.refresh() // Refresh the product list
     } catch (error: any) {
       console.error('Sync error:', error)

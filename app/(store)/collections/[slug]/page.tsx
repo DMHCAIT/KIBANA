@@ -25,11 +25,28 @@ interface CollectionPageProps {
 export async function generateMetadata({ params }: CollectionPageProps): Promise<Metadata> {
   const supabase = await createClient()
   
-  const { data: category } = await supabase
+  // Try by slug first
+  let category = null
+  const { data: categoryBySlug } = await supabase
     .from('categories')
     .select('name, description')
-    .or(`slug.eq.${params.slug},id.eq.${params.slug}`)
+    .eq('slug', params.slug)
     .single()
+
+  if (categoryBySlug) {
+    category = categoryBySlug
+  } else {
+    // Try by ID
+    const { data: categoryById } = await supabase
+      .from('categories')
+      .select('name, description')
+      .eq('id', params.slug)
+      .single()
+    
+    if (categoryById) {
+      category = categoryById
+    }
+  }
 
   return {
     title: category ? `${category.name} | KIBANA Collections` : 'Collection | KIBANA',
@@ -43,14 +60,33 @@ export default async function CollectionPage({ params, searchParams }: Collectio
   const limit = 24
   const offset = (page - 1) * limit
 
-  // Fetch category
-  const { data: category } = await supabase
+  // Fetch category - try by slug first, then by ID
+  let category = null
+  
+  // First try by slug
+  const { data: categoryBySlug } = await supabase
     .from('categories')
     .select('*')
-    .or(`slug.eq.${params.slug},id.eq.${params.slug}`)
+    .eq('slug', params.slug)
     .single()
 
+  if (categoryBySlug) {
+    category = categoryBySlug
+  } else {
+    // If not found by slug, try by ID
+    const { data: categoryById } = await supabase
+      .from('categories')
+      .select('*')
+      .eq('id', params.slug)
+      .single()
+    
+    if (categoryById) {
+      category = categoryById
+    }
+  }
+
   if (!category || !category.is_active) {
+    console.error(`Category not found with slug/id: ${params.slug}`)
     notFound()
   }
 

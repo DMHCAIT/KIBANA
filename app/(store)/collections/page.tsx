@@ -147,7 +147,7 @@ export default async function CollectionsPage() {
               <div className="flex justify-center">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 xl:gap-12 max-w-7xl w-full">
                   {displayCategories.map((category: Category) => (
-                    <Link key={category.id} href={`/categories/${category.slug || category.id}`}>
+                    <Link key={category.id} href={`/collections/${category.slug || category.id}`}>
                       <Card className="group overflow-hidden cursor-pointer border-luxury border-gray-200 hover:border-gray-400 transition-all duration-300 bg-white h-full">
                         {/* Image Section */}
                         <div className="relative h-80 lg:h-96 overflow-hidden bg-gray-50">
@@ -179,7 +179,7 @@ export default async function CollectionsPage() {
                           )}
                           <div className="mt-6 pt-6 border-luxury border-t border-gray-100">
                             <Link 
-                              href={`/categories/${category.slug || category.id}`}
+                              href={`/collections/${category.slug || category.id}`}
                               className="font-menu text-xs text-gray-500 hover:text-gray-900 transition-colors uppercase tracking-wider"
                             >
                               View Collection →
