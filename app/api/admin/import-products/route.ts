@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { exec } from 'child_process'
-import { promisify } from 'util'
-import path from 'path'
-import fs from 'fs'
-
-const execAsync = promisify(exec)
+import { importAllProducts } from '@/lib/import-products'
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,35 +15,25 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
-    // Check if script file exists
-    const scriptPath = path.join(process.cwd(), 'scripts', 'import-products.js')
-    if (!fs.existsSync(scriptPath)) {
-      return NextResponse.json({ 
-        error: 'Import script not found' 
-      }, { status: 404 })
-    }
+    // Run the import
+    const result = await importAllProducts()
 
-    // Run the import script
-    const { stdout, stderr } = await execAsync(`node ${scriptPath}`, {
-      cwd: process.cwd(),
-      env: {
-        ...process.env,
-        NODE_ENV: 'production',
-      },
-      maxBuffer: 10 * 1024 * 1024, // 10MB buffer
-    })
+    if (!result.success) {
+      return NextResponse.json({ 
+        error: result.message,
+        details: result.details,
+      }, { status: 400 })
+    }
 
     return NextResponse.json({ 
       success: true,
-      message: 'Products imported successfully',
-      output: stdout,
-      errors: stderr || null,
+      message: result.message,
+      details: result.details,
     }, { status: 200 })
   } catch (error: any) {
     console.error('Import error:', error)
     return NextResponse.json({ 
       error: error.message || 'Failed to import products',
-      details: error.stderr || error.stdout || null,
     }, { status: 500 })
   }
 }
