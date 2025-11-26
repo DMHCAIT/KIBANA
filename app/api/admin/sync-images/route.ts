@@ -45,12 +45,12 @@ export async function POST(request: NextRequest) {
     const supabase = createAdminClient()
 
     // Get all products
-    const { data: products, error: productsError } = await supabase
+    const { data: products, error: productsQueryError } = await supabase
       .from('products')
       .select('id, name, slug')
 
-    if (productsError) {
-      return NextResponse.json({ error: productsError.message }, { status: 400 })
+    if (productsQueryError) {
+      return NextResponse.json({ error: productsQueryError.message }, { status: 400 })
     }
 
     if (!products || products.length === 0) {
@@ -59,19 +59,19 @@ export async function POST(request: NextRequest) {
 
     // First, check the products/ subfolder (where folders actually are based on test)
     let productFolders: any[] = []
-    const { data: productsFolderData, error: productsError } = await supabase.storage
+    const { data: productsFolderData, error: productsListError } = await supabase.storage
       .from('product-images')
       .list('products', {
         limit: 1000,
         offset: 0,
       })
 
-    if (!productsError && productsFolderData) {
+    if (!productsListError && productsFolderData) {
       productFolders = productsFolderData.filter(item => item.name) // Filter items with names
       console.log(`✅ Found ${productFolders.length} product folders in products/ subfolder`)
       console.log('Folders:', productFolders.map(f => f.name))
-    } else if (productsError) {
-      console.error('Error listing products folder:', productsError.message)
+    } else if (productsListError) {
+      console.error('Error listing products folder:', productsListError.message)
     }
 
     // Also check root (for backward compatibility)
