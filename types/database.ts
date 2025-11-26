@@ -87,6 +87,7 @@ export interface Database {
           stock_status: 'in_stock' | 'out_of_stock' | 'pre_order'
           seo_title: string | null
           seo_description: string | null
+          specifications: any | null
           created_at: string
           updated_at: string
         }
@@ -105,6 +106,7 @@ export interface Database {
           stock_status?: 'in_stock' | 'out_of_stock' | 'pre_order'
           seo_title?: string | null
           seo_description?: string | null
+          specifications?: any | null
           created_at?: string
           updated_at?: string
         }
@@ -123,6 +125,7 @@ export interface Database {
           stock_status?: 'in_stock' | 'out_of_stock' | 'pre_order'
           seo_title?: string | null
           seo_description?: string | null
+          specifications?: any | null
           created_at?: string
           updated_at?: string
         }

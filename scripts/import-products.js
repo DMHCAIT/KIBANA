@@ -405,6 +405,10 @@ async function createProduct(productData, categoryId) {
       .update({
         price: productData.price,
         category_id: categoryId,
+        description: productData.description,
+        short_description: productData.short_description,
+        brand: productData.brand || 'KIBANA',
+        specifications: productData.specifications || null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', productId)
@@ -414,9 +418,6 @@ async function createProduct(productData, categoryId) {
       return null
     }
   } else {
-    // Build specifications JSON
-    const specifications = productData.specifications ? JSON.stringify(productData.specifications) : null
-    
     const { data, error } = await supabase
       .from('products')
       .insert({
@@ -432,6 +433,7 @@ async function createProduct(productData, categoryId) {
         stock_status: 'in_stock',
         seo_title: productData.name,
         seo_description: productData.short_description || productData.description?.substring(0, 160),
+        specifications: productData.specifications || null,
       })
       .select()
       .single()

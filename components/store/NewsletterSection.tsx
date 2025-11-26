@@ -38,22 +38,22 @@ export function NewsletterSection() {
   }
 
   return (
-    <section className="py-20 bg-gray-50 border-t border-gray-200">
-      <div className="container px-4">
+    <section className="w-full bg-white section-luxury border-t border-gray-100">
+      <div className="container px-4 sm:px-6 lg:px-8 mx-auto py-16 md:py-20 lg:py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-2xl mx-auto text-center"
+          className="max-w-3xl mx-auto text-center"
         >
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-black mb-6">
-            <Mail className="h-6 w-6 text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-black mb-6 rounded-full">
+            <Mail className="h-7 w-7 text-white" />
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+          <h2 className="font-hero text-4xl md:text-5xl lg:text-6xl mb-6 md:mb-8 text-gray-900 leading-tight tracking-tight">
             Stay in the Loop
           </h2>
-          <p className="text-base text-gray-600 mb-8">
+          <p className="font-body text-base md:text-lg text-gray-600 mb-10 max-w-2xl mx-auto">
             Subscribe to our newsletter and be the first to know about new collections, exclusive offers, and fashion tips.
           </p>
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
