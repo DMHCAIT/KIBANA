@@ -92,9 +92,9 @@ export default async function HomePage() {
     <div className="flex min-h-screen flex-col bg-white">
       <StoreHeader />
       <main className="flex-1 bg-white">
-        <div className="bg-white">
+        <div className="bg-white relative">
           <HeroSection banner={banner || undefined} />
-          <div className="space-y-16 md:space-y-20 lg:space-y-24">
+          <div className="space-y-16 md:space-y-20 lg:space-y-24 relative">
             <FeaturedCategories categories={categories} />
             <Bestsellers products={bestsellers} />
             <StorySection />

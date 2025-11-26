@@ -37,16 +37,21 @@ export function ProductCard({ product }: ProductCardProps) {
   useEffect(() => {
     const checkWishlist = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const { data } = await supabase
-        .from('wishlist')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('product_id', product.id)
-        .single()
-
-      setIsWishlisted(!!data)
+      
+      if (user) {
+        // Check database for logged-in users
+        const { data } = await supabase
+          .from('wishlist')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('product_id', product.id)
+          .single()
+        setIsWishlisted(!!data)
+      } else {
+        // Check localStorage for guest users
+        const wishlist = JSON.parse(localStorage.getItem('guestWishlist') || '[]')
+        setIsWishlisted(wishlist.includes(product.id))
+      }
     }
     checkWishlist()
   }, [product.id, supabase])
@@ -57,37 +62,50 @@ export function ProductCard({ product }: ProductCardProps) {
     
     const { data: { user } } = await supabase.auth.getUser()
     
-    if (!user) {
-      router.push(`/login?redirect=/products/${productSlug}`)
-      return
-    }
+    // For logged-in users, use database
+    if (user) {
+      if (isWishlisted) {
+        const { error } = await supabase
+          .from('wishlist')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('product_id', product.id)
 
-    if (isWishlisted) {
-      const { error } = await supabase
-        .from('wishlist')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('product_id', product.id)
+        if (!error) {
+          setIsWishlisted(false)
+          toast.success('Removed from wishlist')
+        } else {
+          toast.error('Failed to remove from wishlist')
+        }
+      } else {
+        const { error } = await supabase
+          .from('wishlist')
+          .insert({
+            user_id: user.id,
+            product_id: product.id,
+          })
 
-      if (!error) {
+        if (!error) {
+          setIsWishlisted(true)
+          toast.success('Added to wishlist')
+        } else {
+          toast.error('Failed to add to wishlist')
+        }
+      }
+    } else {
+      // For guest users, use localStorage
+      const wishlist = JSON.parse(localStorage.getItem('guestWishlist') || '[]')
+      
+      if (isWishlisted) {
+        const updatedWishlist = wishlist.filter((id: string) => id !== product.id)
+        localStorage.setItem('guestWishlist', JSON.stringify(updatedWishlist))
         setIsWishlisted(false)
         toast.success('Removed from wishlist')
       } else {
-        toast.error('Failed to remove from wishlist')
-      }
-    } else {
-      const { error } = await supabase
-        .from('wishlist')
-        .insert({
-          user_id: user.id,
-          product_id: product.id,
-        })
-
-      if (!error) {
+        wishlist.push(product.id)
+        localStorage.setItem('guestWishlist', JSON.stringify(wishlist))
         setIsWishlisted(true)
         toast.success('Added to wishlist')
-      } else {
-        toast.error('Failed to add to wishlist')
       }
     }
   }
@@ -99,29 +117,46 @@ export function ProductCard({ product }: ProductCardProps) {
     setAddingToCart(true)
     const { data: { user } } = await supabase.auth.getUser()
     
-    if (!user) {
-      router.push(`/login?redirect=/products/${productSlug}`)
-      setAddingToCart(false)
-      return
-    }
-
     try {
       const selectedVariant = product.variants?.[0] || null
-      const { error } = await supabase
-        .from('cart')
-        .upsert({
-          user_id: user.id,
-          product_id: product.id,
-          variant_id: selectedVariant?.id || null,
-          quantity: 1,
-        }, {
-          onConflict: 'user_id,product_id,variant_id'
-        })
+      
+      // For logged-in users, use database
+      if (user) {
+        const { error } = await supabase
+          .from('cart')
+          .upsert({
+            user_id: user.id,
+            product_id: product.id,
+            variant_id: selectedVariant?.id || null,
+            quantity: 1,
+          }, {
+            onConflict: 'user_id,product_id,variant_id'
+          })
 
-      if (error) throw error
-
-      toast.success('Added to cart')
-      router.refresh()
+        if (error) throw error
+        toast.success('Added to cart')
+        router.refresh()
+      } else {
+        // For guest users, use localStorage
+        const cart = JSON.parse(localStorage.getItem('guestCart') || '[]')
+        const existingItemIndex = cart.findIndex((item: any) => 
+          item.product_id === product.id && item.variant_id === selectedVariant?.id
+        )
+        
+        if (existingItemIndex >= 0) {
+          cart[existingItemIndex].quantity += 1
+        } else {
+          cart.push({
+            product_id: product.id,
+            variant_id: selectedVariant?.id || null,
+            quantity: 1,
+            product: product // Store product data for guest cart display
+          })
+        }
+        
+        localStorage.setItem('guestCart', JSON.stringify(cart))
+        toast.success('Added to cart')
+      }
     } catch (error: any) {
       console.error('Error adding to cart:', error)
       toast.error(error.message || 'Failed to add to cart')
